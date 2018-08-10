@@ -1,0 +1,28 @@
+#div11 {
+  font-size:15px;
+  position: relative;
+  left: 235px;
+}
+span {
+  font-family: Helvetia, Arial, 隶书;
+  font-size: 40px;
+  position: relative;
+  left: 20px;
+  top: 20px;
+}
+#timg1 {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  position: relative;
+  left: 15px;
+  top: 15px;
+}
+#div2 {
+  position: relative;
+  top: 180px;
+  left: 250px;
+}
+#div2 input {
+  width:300px;
+}

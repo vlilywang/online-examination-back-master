@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>questions</title>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/template-web.js"></script>
+  <script src="js/zui.min.js"></script>
+  <script src="lib/chart/zui.chart.min.js"></script>
+  <script src="js/checkbox.js"></script>
+  <script src="js/deleteQuestions.js"></script>
+  <script src="js/getUsername.js"></script>
+  <link rel="stylesheet" href="css/zui.min.css">
+  <link rel="stylesheet" href="css/questions.css">
+</head>
+<script type="text/javascript">
+    $.get("/api/question?page=1&pageSize=6", function (data) {
+        $(data.content).each(function (index, item) {
+            $("#tbody").append("<tr>" +
+                  "<td>" +
+                    "<input type='checkbox' value='1' name='single'>" +
+                  "</td>" +
+                  "<td>" + item.id + "</td>" +
+                  "<td>" + item.createTime + "</td>" +
+                  "<td>" + item.type.typeName + "</td>" +
+                  "<td>" + item.title + "</td>" +
+                  "<td>" + item.option + "</td>" +
+                  "<td>" + item.answer + "</td>" +
+                  "<td>" +
+                    "<button class='btn' title='编辑试题'>" +
+                      "<i class='icon icon-edit' id='edit'></i>" +
+                    "</button>" +
+                    "<button class='btn' onclick='_delete(this)' title='删除试题'>" +
+                      " <i class='icon icon-cut' id='delete'></i>" +
+                    "</button>" +
+                  "</td>" +
+                " </tr>"
+            )
+        })
+    })
+</script>
+<body>
+  <nav class="navbar" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+      </div>
+      <div class="collapse navbar-collapse navbar-collapse-example">
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="updateUser.html">用户管理</a>
+          </li>
+          <li>
+            <a href="questions.html">试题管理</a>
+          </li>
+          <li>
+            <a href="paper.html">试卷管理</a>
+          </li>
+          <li>
+            <a href="scores.html">学生成绩查询</a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li>教师</li>
+          <li>
+            <a data-toggle="dropdown" style="font-size:16px">
+              <span id="username"></span>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="#">个人信息</a>
+              </li>
+              <li>
+                <a href="updPassword.html">修改密码</a>
+              </li>
+              <li>
+                <a href="/auth/logout">退出</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div id="main">
+    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
+      <ul class="tree tree-menu">
+        <li>
+          <a href="questions.html">
+            <i class="icon icon-th"></i>首页
+          </a>
+        </li>
+        <li>
+          <a href="addQuestions.html">
+            <i class="icon icon-user"></i>新增试题
+          </a>
+        </li>
+        <li>
+          <a href="selectQuestions.html">
+            <i class="icon icon-time"></i>查询试题
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <i class="icon icon-trash"></i>批量删除
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <table class="table table-hover" id="tb">
+      <thead>
+        <tr>
+          <th style="width:50px;">
+            <input type="checkbox" value="1" name="all">
+          </th>
+          <th style="width:80px;">试题id</th>
+          <th style="width:150px;">创建时间</th>
+          <th style="width:80px;">试题类型</th>
+          <th style="width:220px;">内容</th>
+          <th style="width:100px;">选项</th>
+          <th style="width:170px;">答案</th>
+          <th style="width:150px;">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+      </tbody>
+    </table>
+  </div>
+  <div class="pager">
+    <li class="pager-item-left">
+      <a class="pager-item" data-page="1" href="#page=1">
+        <i class="icon icon-step-backward"></i>
+      </a>
+    </li>
+    <li class="disabled">
+      <a class="pager-item" data-page="0" href="###">
+        <i class="icon icon-double-angle-left"></i>
+      </a>
+    </li>
+    <li class="active">
+      <a class="pager-item" data-page="1" href="#page=1">1</a>
+    </li>
+    <li>
+      <a class="pager-item" data-page="2" href="#page=2">2</a>
+    </li>
+    <li>
+      <a class="pager-item" data-page="3" href="#page=3">3</a>
+    </li>
+    <li>
+      <a class="pager-item" data-page="4" href="#page=4">4</a>
+    </li>
+    <li>
+      <a class="pager-item" data-page="5" href="#page=5">5</a>
+    </li>
+    <li>
+      <a class="pager-item" data-page="6" href="#page=6">6</a>
+    </li>
+    <li>
+      <a class="pager-item" data-page="2" href="#page=2">
+        <i class="icon icon-double-angle-right"></i>
+      </a>
+    </li>
+    <li class="pager-item-right">
+      <a class="pager-item" data-page="10" href="#page=10">
+        <i class="icon icon-step-forward"></i>
+      </a>
+    </li>
+    <li>
+      <div class="pager-label">第
+        <strong>1</strong>/
+        <strong>10</strong> 页
+      </div>
+    </li>
+    <li>
+      <div class="pager-label">第
+        <strong>1</strong> ~
+        <strong>10</strong> 项
+      </div>
+    </li>
+    <li>
+      <div class="pager-label">共
+        <strong>100</strong> 项
+      </div>
+    </li>
+  </div>
+</body>
+
+</html>

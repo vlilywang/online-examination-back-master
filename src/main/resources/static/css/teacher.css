@@ -1,0 +1,81 @@
+.navbar {
+	height: 100px;
+	font-size: 20px;
+}
+.title {
+	margin: 20px 0;
+	display: inline-block;
+	border-bottom: 2px solid #FB9337;
+	width: 100px;
+}
+.up {
+	padding: 10px;
+	background: #f7f7f7;
+	position: relative;
+}
+.content ul li {
+	font-size: 11px;
+	line-height: 18px;
+	border-bottom: 1px dashed #ddd;
+	padding: 10px;
+}
+.content ul li .user {
+	float: left;
+	margin-right: 10px;
+	padding: 2px;
+}
+.content .more {
+	display: block;
+	text-align: center;
+	background: #eee;
+	color: #069;
+	padding: 5px 0;
+	font-size: 10px;
+	font-weight: bold;
+}
+.userbox {
+	position: relative;
+	left: 100px;
+	width: 350px;
+	height: 600px;
+	float: left;
+}
+#tb1 {
+	width: 800px;
+	position: relative;
+	left: 20px;
+}
+#tobdy tr td {
+	height: 50px;
+}
+.questionbox {
+	position: relative;
+	left: 20px;
+	float: left;
+}
+#tb1 thead th, #tb1 thead td {
+	padding: 7px 10px;
+	border: 1px solid #ddd;
+	text-align: left;
+}
+.head0 {
+	background-color: #fcfcfc;
+}
+.head1 {
+	background-color: #f7f7f7;
+}
+#tb1 tbody tr td {
+	padding: 8px 10px;
+	border-right: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+	color: #666;
+}
+#tr {
+	height: 50px;
+}
+.questionbox{
+	font-size: 15px;
+}
+.userbox{
+	font-size: 15px;
+}

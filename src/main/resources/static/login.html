@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/template-web.js"></script>
+    <script src="js/zui.min.js"></script>
+    <script src="lib/chart/zui.chart.min.js"></script>
+    <link rel="stylesheet" href="css/zui.min.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<script type="text/javascript">
+    function _login() {
+        var username = document.forms.item(0).username.value;
+        var password = document.forms.item(0).password.value;
+        if (username == null || username == "") {
+            alert("请输入用户名")
+        } else {
+            if (password == null || password == "") {
+                alert("请输入密码")
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/auth/login",
+                    data: { username: username, password: password },
+                    dataType: "html",
+                    success: function (data) {
+                        window.location.href = "teacher.html";
+                    },
+                    error: function (data) {
+                        alert("用户名或密码错误")
+                    }
+                });
+            }
+        }
+    }
+</script>
+
+<body>
+    <div id="div1">
+        <img src="img/timg1.jpg" id="timg1" />
+        <span>欢迎登陆在线考试系统</span>
+        <div id="div11">Welcome to Online Examination System</div>
+    </div>
+    <div id="div2">
+        <form class="form-horizontal" action="javascript:_login()">
+            <div class="form-group">
+                <label class="col-sm-2 required">
+                    <i class="icon icon-user"></i>
+                    用户名
+                </label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="username" placeholder="用户名">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 required">
+                    <i class="icon icon-lock"></i>
+                    密码
+                </label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="password" class="form-control" name="password" placeholder="密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn">登录</button>
+                    <button type="reset" class="btn">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

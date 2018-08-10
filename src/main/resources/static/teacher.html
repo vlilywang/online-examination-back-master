@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>teacher</title>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/template-web.js"></script>
+  <script src="js/zui.min.js"></script>
+  <script src="lib/chart/zui.chart.min.js"></script>
+  <script src="js/getUsername.js"></script>
+  <link rel="stylesheet" href="css/zui.min.css">
+  <link rel="stylesheet" href="css/teacher.css">
+</head>
+<script type="text/javascript">
+    $(function () {
+        $.get("/api/question?page=1&pageSize=6", function (data) {
+            $(data.content).each(function (index, item) {
+                $("#tbody").append("<tr>" +
+                    "<td>" + item.id + "</td>" +
+                    "<td>" + item.title + "</td>" +
+                    "<td>" + item.type.typeName + "</td>" +
+                    "<td>" + item.answer + "</td>" +
+                    "<td>" + item.createTime + "</td>" +
+                    "</tr>")
+            })
+        })
+        $.get("api/user?page=1&pageSize=6", function (data) {
+            $(data.content).each(function (index, item) {
+                $("#userList").append(
+                    "<li>" +
+                    "<div class='user'><img src='img/user1.jpg'/></div>" +
+                    "<div class='info'>" +
+                    "<a href=''>" +item.name + "</a> <br/>ID:" +
+                    item.id + " <br/> " + item.createTime +
+                    "</div>" +
+                    "</li>"
+                )
+            })
+        })
+    })
+</script>
+
+<body>
+<nav class="navbar" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+    </div>
+    <div class="collapse navbar-collapse navbar-collapse-example">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="updateUser.html">用户管理</a>
+        </li>
+        <li>
+          <a href="questions.html">试题管理</a>
+        </li>
+        <li>
+          <a href="paper.html">试卷管理</a>
+        </li>
+        <li>
+          <a href="scores.html">学生成绩查询</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>教师</li>
+        <li>
+          <a data-toggle="dropdown" style="font-size:16px">
+            <span id="username"></span>
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="#">个人信息</a>
+            </li>
+            <li>
+              <a href="updPassword.html">修改密码</a>
+            </li>
+            <li>
+              <a href="/auth/logout">退出</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="questionbox">
+  <div class="title">
+    <h3>最新试题</h3>
+  </div>
+  <table cellpadding="0" cellspacing="0" border="0" id="tb1">
+    <thead>
+    <tr>
+      <th class="head1" style="width:100px">题号</th>
+      <th class="head0" style="width:250px">题目</th>
+      <th class="head1">类型</th>
+      <th class="head0">答案</th>
+      <th class="head1">创建时间</th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+    </tbody>
+  </table>
+</div>
+<div class="userbox">
+  <div class="title">
+    <h3>新增用户列表</h3>
+  </div>
+  <div class="up"></div>
+  <div class="content">
+    <div id="userList"></div>
+    <a class="more" href="updateUser.html">查看更多用户</a>
+  </div>
+</div>
+</body>
+
+</html>

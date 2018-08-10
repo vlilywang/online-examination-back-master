@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>addQuestions</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/template-web.js"></script>
+    <script src="js/zui.min.js"></script>
+    <script src="lib/chart/zui.chart.min.js"></script>
+    <script src="js/getUsername.js"></script>
+    <link rel="stylesheet" href="css/zui.min.css">
+</head>
+<style type="text/css">
+    #tb {
+        width: 1000px;
+        position: relative;
+    }
+
+    .menu {
+        display: flex;
+    }
+
+    #main {
+        display: flex;
+    }
+
+    .navbar {
+        height: 100px;
+        font-size: 20px;
+    }
+</style>
+<script type="text/javascript">
+    function showAnswer() {
+        var type = document.getElementById("type").value;
+        if (type == 1) {
+            $("#tr").append(
+                "<td>" +
+                "<input type='radio' name='1' value='A' class='answers'>A</td>" +
+                "<td>" +
+                "<input type='radio' name='1' value='B' class='answers'>B</td>" +
+                "<td>" +
+                "<input type='radio' name='1' value='C' class='answers'>C</td>" +
+                "<td>" +
+                "<input type='radio' name='1' value='D' class='answers'>D</td>"
+            )
+        } else if (type == 2) {
+            $("#tr").append(
+                "<td>" +
+                "<input type='checkbox' value='A' class='answers'>A</td>" +
+                "<td>" +
+                "<input type='checkbox' value='B' class='answers'>B</td>" +
+                "<td>" +
+                "<input type='checkbox' value='C' class='answers'>C</td>" +
+                "<td>" +
+                "<input type='checkbox' value='D' class='answers'>D</td>"
+            )
+        } else {
+            $("#tr").append(
+                "<td>" +
+                "<input type='radio' name='radio' value='true' class='answers'>&check;</td>" +
+                "<td>" +
+                "<input type='radio' name='radio' value='false' class='answers'>&times;</td>"
+            )
+        }
+    }
+
+    function save() {
+        var typeId = $("#type").val();
+        var title = $("#title").val();
+        var option = $("#option").val();
+        var answers = document.getElementsByClassName("answers");
+        var answer = "";
+        for (var i = 0; i < answers.length; i++) {
+            if (answers[i].checked) {
+                answer += answers[i].value
+            }
+        }
+        if (type == "" || title == "" || option == "" || answer == "") {
+            alert("试题内容不能为空");
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/api/question",
+                data: JSON.stringify({
+                    title: title,
+                    answer: answer,
+                    typeId: typeId,
+                    keyword: "关键词",
+                    option: "qq,ww,ee,rr"
+                }),
+                contentType: "application/json",
+                success: function (data) {
+                    alert("增加成功")
+                    window.location.href = "questions.html"
+                },
+                error: function (data) {
+                    alert("增加失败")
+                    console.log(JSON.stringify(data.responseText))
+                }
+            });
+        }
+
+    }
+</script>
+
+<body>
+<nav class="navbar" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-collapse-example">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="updateUser.html">用户管理</a>
+                </li>
+                <li>
+                    <a href="questions.html">试题管理</a>
+                </li>
+                <li>
+                    <a href="paper.html">试卷管理</a>
+                </li>
+                <li>
+                    <a href="scores.html">学生成绩查询</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>教师</li>
+                <li>
+                    <a data-toggle="dropdown" style="font-size:16px" id="username">
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="updPassword.html">修改密码</a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout">退出</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="main">
+    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
+        <ul class="tree tree-menu">
+            <li>
+                <a href="questions.html">
+                    <i class="icon icon-th"></i>首页
+                </a>
+            </li>
+            <li>
+                <a href="addQuestions.html">
+                    <i class="icon icon-user"></i>新增试题
+                </a>
+            </li>
+            <li>
+                <a href="selectQuestions.html">
+                    <i class="icon icon-time"></i>查询试题
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <i class="icon icon-trash"></i>批量删除
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <form id="f1">
+        <table class="table table-borderless" id="tb">
+            <thead>
+            <tr>
+                <th colspan="4">请选择题目类型</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="4">
+                    <select class="form-control" id="type">
+                        <option value="1">单选题</option>
+                        <option value="2">多选题</option>
+                        <option value="3">判断题</option>
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+            <thead>
+            <tr>
+                <th colspan="4">请输入题目</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="4">
+                    <textarea class="form-control" rows="5" placeholder="请输入题目" id="title"></textarea>
+                </td>
+            </tr>
+            </tbody>
+            <thead>
+            <tr>
+                <th colspan="4">请输入选项</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="4">
+                    <textarea class="form-control" rows="5" placeholder="请输入选项" id="option"></textarea>
+                </td>
+            </tr>
+            </tbody>
+            <thead>
+            <tr>
+                <th colspan="4">
+                    <input type="button" class="btn" onclick="showAnswer()" value="答案">
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr id="tr">
+            </tr>
+            <tr>
+                <td style="text-align:right" colspan="4">
+                    <input type="button" class="btn btn-primary" onclick="save()" value="保存">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+</body>
+
+</html>

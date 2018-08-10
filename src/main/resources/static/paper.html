@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>paper</title>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/template-web.js"></script>
+  <script src="js/zui.min.js"></script>
+  <script src="lib/chart/zui.chart.min.js"></script>
+  <script src="js/getUsername.js"></script>
+  <link rel="stylesheet" href="css/zui.min.css">
+  <link rel="stylesheet" href="css/teacher.css">
+</head>
+<style type="text/css">
+  .navbar {
+    height: 100px;
+    font-size: 20px;
+  }
+</style>
+
+<body>
+  <nav class="navbar" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+      </div>
+      <div class="collapse navbar-collapse navbar-collapse-example">
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="updateUser.html">用户管理</a>
+          </li>
+          <li>
+            <a href="questions.html">试题管理</a>
+          </li>
+          <li>
+            <a href="paper.html">试卷管理</a>
+          </li>
+          <li>
+            <a href="scores.html">学生成绩查询</a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li>教师</li>
+          <li>
+            <a data-toggle="dropdown" style="font-size:16px">
+              <span id="username"></span>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="#">个人信息</a>
+              </li>
+              <li>
+                <a href="updPassword.html">修改密码</a>
+              </li>
+              <li>
+                <a href="/auth/logout">退出</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</body>
+
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>updateUser</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/template-web.js"></script>
+    <script src="js/zui.min.js"></script>
+    <script src="lib/chart/zui.chart.min.js"></script>
+    <script src="js/deleteUsers.js"></script>
+    <script src="js/checkbox.js"></script>
+    <script src="js/getUsername.js"></script>
+    <link rel="stylesheet" href="css/zui.min.css">
+    <link rel="stylesheet" href="css/updateUser.css">
+</head>
+<script type="text/javascript">
+    $(function () {
+        $.get("api/user?page=1&pageSize=6", function (data) {
+            $(data.content).each(function (index, item) {
+                $("#body").append("<tr>" +
+                    "<td>" +
+                    "<input type='checkbox' value='1' name='single'>" +
+                    "</td>" +
+                    "<td>" + item.id + "</td>" +
+                    "<td>" + item.createTime + "</td>" +
+                    "<td>" + item.username + "</td>" +
+                    "<td>" + item.name + "</td>" +
+                    "<td>" + item.role.name + "</td>" +
+                    "<td>" +
+                    "<button class='btn' onclick='_show(this)' title='编辑用户'>" +
+                    "<i class='icon icon-edit' id='edit'></i>" +
+                    "</button>" +
+                    "<button class='btn' onclick='_delete(this)' title='删除用户'>" +
+                    "<i class='icon icon-cut' id='delete'></i>" +
+                    "</button>" +
+                    "<button class='btn' onclick='_updUserPass(this)' title='修改密码'>" +
+                    "<i class='icon icon-key'></i>" +
+                    "</button>" +
+                    "</td>" +
+                    "</tr>")
+            })
+        })
+    })
+
+    function _show(obj) {
+        while (obj.nodeName != "TR") {
+            obj = obj.parentNode;
+        }
+        var idx = obj.rowIndex;
+        var id = obj.getElementsByTagName("td")[1].innerHTML;
+        var w = document.body.clientWidth;
+        w = w / 2 - 350;
+        document.getElementById("conver").style.display = "block";
+        document.getElementById("show").style.display = "block";
+        document.getElementById("pager").style.display = "none";
+        document.getElementById("main").style.display = "none";
+        document.getElementById("show").style.left = w + "px";
+        document.getElementById("show").style.top = 120 + "px";
+        $("#id").append(id)
+    }
+
+    function _close() {
+        window.location.href = "updateUser.html";
+    }
+
+    function _updUser() {
+        var id = $("#id").text();
+        var name = document.getElementById("name").value;
+        var typeId = document.getElementById("type").value;
+        if (typeId == "学生") {
+            roleId = 2;
+        } else {
+            roleId = 1;
+        }
+        $.ajax({
+            type: "PUT",
+            url: "/api/user/" + id,
+            data: JSON.stringify({name: name, roleId: roleId}),
+            contentType: "application/json",
+            success: function (data) {
+                alert("用户信息修改成功！")
+                window.location.href = "updateUser.html"
+            },
+            error: function (data) {
+                console.log(JSON.stringify(data))
+            }
+        });
+    }
+    function _updUserPass() {
+        while (obj.nodeName != "TR") {
+            obj = obj.parentNode;
+        }
+        var idx = obj.rowIndex;
+        var id = obj.getElementsByTagName("td")[1].innerHTML;
+    }
+</script>
+<body>
+<nav class="navbar" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-collapse-example">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="updateUser.html">用户管理</a>
+                </li>
+                <li>
+                    <a href="questions.html">试题管理</a>
+                </li>
+                <li>
+                    <a href="paper.html">试卷管理</a>
+                </li>
+                <li>
+                    <a href="scores.html">学生成绩查询</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>教师</li>
+                <li>
+                    <a data-toggle="dropdown" style="font-size:16px">
+                        <span id="username"></span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="updPassword.html">修改密码</a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout">退出</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="main">
+    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
+        <ul class="tree tree-menu">
+            <li>
+                <a href="updateUser.html">
+                    <i class="icon icon-th"></i>首页
+                </a>
+            </li>
+            <li>
+                <a href="addUser.html">
+                    <i class="icon icon-user"></i>新增用户
+                </a>
+            </li>
+            <li>
+                <a href="selectUser.html">
+                    <i class="icon icon-time"></i>查询用户
+                </a>
+            </li>
+            <li>
+                <a href="updateUser.html">
+                    <i class="icon icon-trash"></i>批量删除
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <table class="table table-hover" id="tb">
+        <thead>
+        <tr>
+            <th>
+                <input type='checkbox' value='1' name='all'>
+            </th>
+            <th style='width:125px;'>用户id</th>
+            <th style='width:150px;'>创建时间</th>
+            <th style='width:200px;'>用户名</th>
+            <th style='width:200px;'>真实姓名</th>
+            <th style='width:150px;'>用户类型</th>
+            <th style='width:175px;'>操作</th>
+        </tr>
+        </thead>
+        <tbody id="body">
+        </tbody>
+    </table>
+</div>
+<div id="pager" class="pager">
+    <li class="pager-item-left">
+        <a class="pager-item" data-page="1" href="#page=1">
+            <i class="icon icon-step-backward"></i>
+        </a>
+    </li>
+    <li class="disabled">
+        <a class="pager-item" data-page="0" href="###">
+            <i class="icon icon-double-angle-left"></i>
+        </a>
+    </li>
+    <li class="active">
+        <a class="pager-item" data-page="1" href="#page=1">1</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="2" href="#page=2">2</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="3" href="#page=3">3</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="4" href="#page=4">4</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="5" href="#page=5">5</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="6" href="#page=6">6</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="2" href="#page=2">
+            <i class="icon icon-double-angle-right"></i>
+        </a>
+    </li>
+    <li class="pager-item-right">
+        <a class="pager-item" data-page="10" href="#page=10">
+            <i class="icon icon-step-forward"></i>
+        </a>
+    </li>
+    <li>
+        <div class="pager-label">第
+            <strong>1</strong>/
+            <strong>10</strong> 页
+        </div>
+    </li>
+    <li>
+        <div class="pager-label">第
+            <strong>1</strong> ~
+            <strong>10</strong> 项
+        </div>
+    </li>
+    <li>
+        <div class="pager-label">共
+            <strong>100</strong> 项
+        </div>
+    </li>
+</div>
+<div id="conver">
+    <div id="show">
+        <strong style="font-size:22px">
+            您正在修改ID:
+            <span id="id"></span>
+            的信息
+        </strong>
+        <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
+        <hr style="clear: right;"/>
+        <form id="upd" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 required" style="width:100px;">真实姓名</label>
+                <input type="text" class="form-control" id="name" style="width:500px;" placeholder="真实姓名">
+            </div>
+            <br>
+            <div class="form-group">
+                <label class="col-sm-2 required" style="width:100px;">用户角色</label>
+                <select class="form-control" id="type" style="width:500px">
+                    <option value="2">学生</option>
+                    <option value="1">教师</option>
+                </select>
+            </div>
+            <br>
+            <br>
+            <div style="text-align:right;width:650px">
+                <button type="button" class="btn" onclick="javascript:_updUser()">确认修改</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+</html>

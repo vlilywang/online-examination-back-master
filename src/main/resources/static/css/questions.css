@@ -1,0 +1,25 @@
+#f1 {
+  width: 1000px;
+  position: relative;
+  left: 200px;
+}
+.menu {
+  display: flex;
+}
+#main {
+  display: flex;
+}
+#tb th,td {
+  text-align: center;
+}
+.navbar {
+  height: 100px;
+  font-size: 20px;
+}
+#tb {
+  width: 1000px;
+}
+.pager {
+  position: relative;
+  left: 350px;
+}
