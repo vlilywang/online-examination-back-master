@@ -4,6 +4,7 @@ import com.init.online_examination.domain.ExamPaper;
 import com.init.online_examination.domain.Type;
 import com.init.online_examination.service.ExamPaperService;
 import com.init.online_examination.service.QuestionService;
+import com.init.online_examination.utilty.PageData;
 import com.init.online_examination.utilty.ResultData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,8 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/exampaper")
+// 搜索接口的关键词
+// 生成试卷和删除试卷时没有修改试题的isUsed状态
 public class ExamPaperController {
     private ExamPaperService examPaperService;
     private QuestionService questionService;
@@ -23,27 +26,31 @@ public class ExamPaperController {
     public void setExamPaperService(ExamPaperService examPaperService) {
         this.examPaperService = examPaperService;
     }
+
     @Autowired
     public void setQuestionService(QuestionService questionService) {
         this.questionService = questionService;
     }
 
     // 获取所有试卷 不分页
-    @RequestMapping(name = "/noPage", method = RequestMethod.GET)
-    public ResponseEntity all() {
-        return ResultData.success(examPaperService.list());
-    }
+//    @RequestMapping(name = "/noPage", method = RequestMethod.GET)
+//    public ResponseEntity all() {
+//        return ResultData.success(examPaperService.list());
+//    }
 
     // 获取试卷列表 带分页
-//    @RequestMapping(value = "", method = RequestMethod.GET)
-//    public ResponseEntity find(@RequestParam(defaultValue = "") Date beginTime,
-//                               @RequestParam(defaultValue = "") Date endTime,
-//                               @RequestParam(defaultValue = "") String[] keyword,
-//                               @RequestParam(defaultValue = "1") Integer page,
-//                               @RequestParam(defaultValue = "20") Integer pageSize) {
-//        Page<ExamPaper> examPapers = examPaperService.find(beginTime, endTime, keyword, page, pageSize);
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity find(@RequestParam(defaultValue = "") Date beginTime,
+                               @RequestParam(defaultValue = "") Date endTime,
+                               @RequestParam(defaultValue = "") String[] keyword,
+                               @RequestParam(defaultValue = "1") Integer page,
+                               @RequestParam(defaultValue = "20") Integer pageSize) {
+        Long count = examPaperService.count();
+        Page<ExamPaper> examPapers = examPaperService.find(beginTime, endTime, keyword, page, pageSize);
 //        return ResultData.success(examPapers);
-//    }
+        return ResultData.success(new PageData(examPapers, page, pageSize, count));
+
+    }
 
     // 根据id获取试卷详情 题目 答案
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -65,16 +72,6 @@ public class ExamPaperController {
         Integer singleAmount = 0;
         Integer multiAmount = 0;
         Integer judgeAmount = 0;
-        /**
-         * private Long id;
-         *     private String title;
-         *     private Integer Duration; // 持续时间，固定值 60 分钟
-         *     private Integer singleAmount;
-         *     private Integer multiAmount;
-         *     private Integer judgeAmount;
-         *     private Date createTime;
-         *     private String keyword;
-         *     private Integer isDeleted;*/
 
         if (body.containsKey("title") && !body.get("title").toString().isEmpty()) {
             title = body.get("title").toString().trim();
@@ -135,14 +132,72 @@ public class ExamPaperController {
     }
 
     // 删除试卷
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/id/{id}", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity delete(@PathVariable Long id) {
         ExamPaper examPaper = examPaperService.get(id);
         if (examPaper == null) {
             return ResultData.error("id参数不正确");
         }
-        examPaperService.delete(examPaper);
+        if (examPaper.getIsUsed().equals(0)) {
+            examPaperService.delete(examPaper);
+        } else {
+            return ResultData.error("该试卷已经考过试，不能删除");
+        }
         return ResultData.success();
     }
+
+
+    //    // 考过试后修改试题is_used状态
+//    @RequestMapping(value = "/update/isUsed/{id}", method = RequestMethod.PUT)
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity updateIsUsed(@PathVariable Long id, @RequestBody Map body) throws Exception {
+//        Integer isUsed = null;
+//        if (body.containsKey("isUsed") && !body.get("isUsed").toString().isEmpty()) {
+//            isUsed = Integer.valueOf(body.get("isUsed").toString());
+//        } else {
+//            return ResultData.error("缺少是否使用的状态isUsed");
+//        }
+//        if (isUsed != 0 && isUsed != 1) {
+//            return ResultData.error("isUsed的值只能是0或者1");
+//        }
+//        ExamPaper examPaper = examPaperService.get(id);
+//        if (examPaper == null) {
+//            return ResultData.error("试卷不存在");
+//        }
+//        return ResultData.success(examPaperService.update(examPaper, isUsed));
+//    }
+    @RequestMapping(value = "/update/isUsed/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity updateIsUsed(@PathVariable Long id) throws Exception {
+        ExamPaper examPaper = examPaperService.get(id);
+        if (examPaper == null) {
+            return ResultData.error("试卷不存在");
+        }
+        return ResultData.success(examPaperService.update(examPaper));
+    }
+
+    // 批量删除试卷 isDeleted == 0
+    @RequestMapping(value = "/delete/ids/{ids}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity deleteIds(@PathVariable List<Long> ids) {
+        List<ExamPaper> examPapers = new ArrayList<>();
+        for (Integer i = 0; i < ids.size(); i++) {
+            ExamPaper examPaper = examPaperService.get(ids.get(i));
+            if (examPaper != null && examPaper.getIsUsed().equals(0)) {
+                examPapers.add(examPaper);
+            } else {
+                return ResultData.error("试卷不存在/试卷考过试，不能删");
+            }
+        }
+        try {
+            for (Integer i = 0; i < examPapers.size(); i++) {
+                examPaperService.delete(examPapers.get(i));
+            }
+            return ResultData.success();
+        } catch (Exception e) {
+            return ResultData.error(e.getMessage());
+        }
+    }
+
 }

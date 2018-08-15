@@ -26,3 +26,12 @@ span {
 #div2 input {
   width:300px;
 }
+body {
+  background: url('../img/bg.jpg');
+}
+#div1 {
+  color: white;
+}
+.form-group {
+  color: rgb(243, 236, 236);
+}

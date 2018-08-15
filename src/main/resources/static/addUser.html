@@ -9,7 +9,7 @@
     <script src="js/zui.min.js"></script>
     <script src="lib/chart/zui.chart.min.js"></script>
     <script src="js/getUsername.js"></script>
-    <script src="js/updateUser.js"></script>
+    <script src="js/addUser.js"></script>
     <link rel="stylesheet" href="css/zui.min.css">
 </head>
 <style type="text/css">
@@ -91,7 +91,7 @@
                 </a>
             </li>
             <li>
-                <a href="selectUser.html">
+                <a href="selectUsers.html">
                     <i class="icon icon-time"></i>查询用户
                 </a>
             </li>
@@ -115,7 +115,7 @@
                     <div class="form-group">
                         <label for="exampleInputAccount4" class="col-sm-2">用户名</label>
                         <div class="col-md-6 col-sm-10">
-                            <input id="userName" class="form-control" id="exampleInputAccount4" placeholder="用户名">
+                            <input id="userName" class="form-control" placeholder="用户名">
                         </div>
                     </div>
                 </td>
@@ -125,7 +125,7 @@
                     <div class="form-group">
                         <label for="exampleInputAccount4" class="col-sm-2">真实姓名</label>
                         <div class="col-md-6 col-sm-10">
-                            <input id="realName" class="form-control" id="exampleInputAccount4" placeholder="真实姓名">
+                            <input id="realName" class="form-control" placeholder="真实姓名">
                         </div>
                     </div>
                 </td>
@@ -136,8 +136,9 @@
                         <label for="exampleInputAddress1" class="col-sm-2">用户类型</label>
                         <div class="col-sm-3">
                             <select class="form-control" id="type">
-                                <option value="学生">学生</option>
-                                <option value="教师">教师</option>
+                                <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
+                                <option value="2">学生</option>
+                                <option value="1">教师</option>
                             </select>
                         </div>
                     </div>

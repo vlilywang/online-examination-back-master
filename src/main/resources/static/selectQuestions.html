@@ -9,28 +9,63 @@
     <script src="js/zui.min.js"></script>
     <script src="lib/chart/zui.chart.min.js"></script>
     <script src="js/getUsername.js"></script>
+    <script src="js/checkbox.js"></script>
+    <script src="js/selectQuestions.js"></script>
+    <script src="lib/datetimepicker/datetimepicker.min.js"></script>
     <link rel="stylesheet" href="css/zui.min.css">
+    <link rel="stylesheet" href="lib/datetimepicker/datetimepicker.min.css">
 </head>
 <style type="text/css">
     .navbar {
         height: 100px;
         font-size: 20px;
     }
-
     #f1 {
         width: 1000px;
         position: relative;
+        float: left;
     }
-
     .menu {
         display: flex;
+        float: left;
     }
-
     #main {
-        display: flex;
+        float: left;
+    }
+    #tb {
+        width: 1000px;
+        position: relative;
+        float: left;
+        left: 180px;
+        display: none;
+    }
+    .pager {
+        position: relative;
+        left: 350px;
+    }
+    #conver{
+        width: 100%;
+        height: 100%;
+        background: black;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 100;
+        opacity: 0.8;
+        display: none;
+    }
+    #show {
+        width: 720px;
+        height: 400px;
+        background: white;
+        position: relative;
+        z-index: 101;
+        display: none;
+        border-radius: 2%;
     }
 </style>
-
+<script type="text/javascript">
+</script>
 <body>
 <nav class="navbar" role="navigation">
     <div class="container-fluid">
@@ -75,63 +110,187 @@
         </div>
     </div>
 </nav>
-
-    <div id="main">
-        <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
-            <ul class="tree tree-menu">
-                <li>
-                    <a href="questions.html">
-                        <i class="icon icon-th"></i>首页
-                    </a>
-                </li>
-                <li>
-                    <a href="addQuestions.html">
-                        <i class="icon icon-user"></i>新增试题
-                    </a>
-                </li>
-                <li>
-                    <a href="selectQuestions.html">
-                        <i class="icon icon-time"></i>查询试题
-                    </a>
-                </li>
-                <li>
-                    <a href="">
-                        <i class="icon icon-trash"></i>批量删除
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <form id="f1">
-            <table class="table table-borderless">
-                <thead>
-                    <tr>
-                        <th>请输入要查询的信息</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="form-group">
-                                <label class="col-sm-2">查询条件</label>
-                                <div class="col-sm-3">
-                                    <select class="form-control">
-                                        <option>创建时间</option>
-                                        <option>试题类型</option>
-                                        <option>关键字</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+<div id="main">
+    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
+        <ul class="tree tree-menu">
+            <li>
+                <a href="questions.html">
+                    <i class="icon icon-th"></i>首页
+                </a>
+            </li>
+            <li>
+                <a href="addQuestion.html">
+                    <i class="icon icon-user"></i>新增试题
+                </a>
+            </li>
+            <li>
+                <a href="selectQuestions.html">
+                    <i class="icon icon-time"></i>查询试题
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <i class="icon icon-trash"></i>批量删除
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <form id="f1">
+        <table class="table table-borderless">
+            <thead>
+            <tr>
+                <th colspan="2">查询条件</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <div style="width:250px">
+                        从
+                        <input type="date" class="form-control form-time" id="startDate" placeholder="选择或者输入一个时间：hh:mm">
+                    </div>
+                </td>
+                <td>
+                    <div style="width:250px">
+                        至
+                        <input type="date" class="form-control form-time" id="endDate" placeholder="选择或者输入一个时间：hh:mm">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>输入要查询的关键字</label>
+                    <input type="text" class="form-control" style="width:250px" id="keyword" placeholder="请输入关键字">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>选择想要查询的用户类型</label>
+                    <select class="form-control" style="width:250px" id="type">
+                        <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
+                        <option value="1">单选题</option>
+                        <option value="2">多选题</option>
+                        <option value="3">判断题</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:right" colspan="2">
+                    <button type="button" onclick="_select()" class="btn btn-default">查询</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <table class="table table-hover" id="tb">
+        <thead>
+        <tr>
+            <th style="width:50px;">
+                <input type="checkbox" value="1" name="all">
+            </th>
+            <th style="width:80px;">试题id</th>
+            <th style="width:150px;">创建时间</th>
+            <th style="width:80px;">试题类型</th>
+            <th style="width:220px;">内容</th>
+            <th style="width:100px;">选项</th>
+            <th style="width:170px;">答案</th>
+            <th style="width:150px;">操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+    </table>
+</div>
+<div id="pager" class="pager">
+    <li class="pager-item-left">
+        <a class="pager-item" data-page="1" href="#page=1">
+            <i class="icon icon-step-backward"></i>
+        </a>
+    </li>
+    <li class="disabled">
+        <a class="pager-item" data-page="0" href="###">
+            <i class="icon icon-double-angle-left"></i>
+        </a>
+    </li>
+    <li class="active">
+        <a class="pager-item" data-page="1" href="#page=1">1</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="2" href="#page=2">2</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="3" href="#page=3">3</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="4" href="#page=4">4</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="5" href="#page=5">5</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="6" href="#page=6">6</a>
+    </li>
+    <li>
+        <a class="pager-item" data-page="2" href="#page=2">
+            <i class="icon icon-double-angle-right"></i>
+        </a>
+    </li>
+    <li class="pager-item-right">
+        <a class="pager-item" data-page="10" href="#page=10">
+            <i class="icon icon-step-forward"></i>
+        </a>
+    </li>
+    <li>
+        <div class="pager-label">第
+            <strong>1</strong>/
+            <strong>10</strong> 页
+        </div>
+    </li>
+    <li>
+        <div class="pager-label">第
+            <strong>1</strong> ~
+            <strong>10</strong> 项
+        </div>
+    </li>
+    <li>
+        <div class="pager-label">共
+            <strong>100</strong> 项
+        </div>
+    </li>
+</div>
+<div id="conver">
+    <div id="show">
+        <strong style="font-size:22px">
+            您正在修改ID为
+            <span class="id" id="id"></span>
+            的试题
+        </strong>
+        <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
+        <hr style="clear: right;"/>
+        <form id="upd" class="form-horizontal">
+            <br>
+            <div class="form-group">
+                <label class="col-sm-2 required" style="width:100px;">题目</label>
+                <input type="text" class="form-control" id="title" style="width:500px;" placeholder="题目">
+            </div>
+            <br>
+            <div class="form-group">
+                <label class="col-sm-2 required" style="width:100px;">选项</label>
+                <input type="text" class="form-control" id="option" style="width:500px;" placeholder="选项">
+            </div>
+            <br>
+            <div class="form-group">
+                <label class="col-sm-2 required" style="width:100px;">答案</label>
+                <input type="text" class="form-control" id="answer" style="width:500px;" placeholder="答案">
+            </div>
+            <br>
+            <br>
+            <div style="text-align:right;width:650px">
+                <button type="button" class="btn" onclick="_updQuestion()">确认修改</button>
+            </div>
         </form>
     </div>
+</div>
 </body>
 
 </html>

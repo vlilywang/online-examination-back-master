@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>createPapers</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/template-web.js"></script>
+    <script src="js/zui.min.js"></script>
+    <script src="lib/chart/zui.chart.min.js"></script>
+    <script src="js/getUsername.js"></script>
+    <link rel="stylesheet" href="css/zui.min.css">
+</head>
+<style type="text/css">
+    .navbar {
+        height: 100px;
+        font-size: 20px;
+    }
+    .menu {
+        display: flex;
+    }
+    #main {
+        display: flex;
+    }
+    #tb {
+        width: 1000px;
+    }
+</style>
+<script type="text/javascript">
+    function _create() {
+        var title = $("#title").val();
+        var keyword = $("#keyword").val();
+        var signal = $("#signal").val();
+        var multi = $("#multi").val();
+        var judge = $("#judge").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/api/exampaper",
+            data: JSON.stringify({
+                title: title,
+                keyword: keyword,
+                singleAmount: signal,
+                multiAmount: multi,
+                judgeAmount: judge
+            }),
+            contentType: "application/json",
+            success: function (data) {
+                alert("试卷生成成功")
+            },
+            error: function (data) {
+                alert(JSON.stringify(data))
+            }
+        });
+    }
+    $.get("/api/exampaper/noPage", function (data) {
+        $(data).each(function (index, item) {
+            $("#tbody").append("<tr>" +
+                "<td>" +
+                "<input type='checkbox' value='1' name='single'>" +
+                "</td>" +
+                "<td>" + item.id + "</td>" +
+                "<td>" + item.createTime + "</td>" +
+                "<td>" + item.keyword + "</td>" +
+                "<td>" + item.singleAmount + "</td>" +
+                "<td>" + item.multiAmount + "</td>" +
+                "<td>" + item.judgeAmount + "</td>" +
+                "<td>" +
+                "<button class='btn' onclick='_show(this)' title='预览试卷'>" +
+                "<i class='icon icon-file-text'></i>" +
+                "</button>" +
+                "<button class='btn' onclick='_delete(this)'' title='删除试卷'>" +
+                "<i class='icon icon-cut' id='delete'></i>" +
+                "</button>" +
+                "</td>" +
+                "</tr>"
+            )
+        })
+    })
+
+</script>
+
+<body>
+<nav class="navbar" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-collapse-example">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="updateUser.html">用户管理</a>
+                </li>
+                <li>
+                    <a href="questions.html">试题管理</a>
+                </li>
+                <li>
+                    <a href="paper.html">试卷管理</a>
+                </li>
+                <li>
+                    <a href="scores.html">学生成绩查询</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>教师</li>
+                <li>
+                    <a data-toggle="dropdown" style="font-size:16px">
+                        <span id="username"></span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="updPassword.html">修改密码</a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout">退出</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="main">
+    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
+        <ul class="tree tree-menu">
+            <li>
+                <a href="paper.html">
+                    <i class="icon icon-th"></i>首页
+                </a>
+            </li>
+            <li>
+                <a href="createPaper.html">
+                    <i class="icon icon-user"></i>生成试卷
+                </a>
+            </li>
+            <li>
+                <a href="selectPapers.html">
+                    <i class="icon icon-time"></i>查询试卷
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <i class="icon icon-trash"></i>批量删除
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <form id="f1">
+        <table class="table table-borderless" id="tb">
+            <thead>
+            <tr>
+                <th>生成试卷</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="exampleInputAccount4" class="col-sm-2">试卷标题</label>
+                        <div class="col-md-6 col-sm-10">
+                            <input id="title" class="form-control" placeholder="试卷标题">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="exampleInputAccount4" class="col-sm-2">关键词</label>
+                        <div class="col-md-6 col-sm-10">
+                            <input id="keyword" class="form-control" placeholder="关键词">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="exampleInputAccount4" class="col-sm-2">单选题</label>
+                        <div class="col-md-6 col-sm-10">
+                            <input id="signal" class="form-control" placeholder="单选题">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="exampleInputAccount4" class="col-sm-2">多选题</label>
+                        <div class="col-md-6 col-sm-10">
+                            <input id="multi" class="form-control" placeholder="多选题">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="exampleInputAddress1" class="col-sm-2">判断题</label>
+                        <div class="col-md-6 col-sm-10">
+                            <input id="judge" class="form-control" placeholder="判断题">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:right">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" onclick="_create()" class="btn btn-default">
+                                <i class="icon icon-plus">生成试卷</i>
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+</body>
+
+</html>

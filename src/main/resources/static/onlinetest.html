@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>onlinetest</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/template-web.js"></script>
+    <script src="js/zui.min.js"></script>
+    <script src="lib/chart/zui.chart.min.js"></script>
+    <script src="js/getUsername.js"></script>
+    <link rel="stylesheet" href="css/zui.min.css">
+    <!-- <link rel="stylesheet" href="css/teacher.css"> -->
+</head>
+<style type="text/css">
+    #tb {
+        position: relative;
+        left: 180px;
+        width: 750px;
+        text-align: center;
+    }
+    #tb th {
+        text-align: center;
+    }
+    .navbar {
+        height: 100px;
+        font-size: 20px;
+    }
+    .pager {
+        position: relative;
+        left: 350px;
+    }
+    #conver {
+        width: 100%;
+        height: 100%;
+        background: black;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 100;
+        opacity: 0.8;
+        display: none;
+    }
+    #show {
+        width: 100%;
+        height: 100%;
+        background: white;
+        position: relative;
+        left: 0px;
+        top: 0px;
+        z-index: 101;
+        display: none;
+        border-radius: 2%;
+    }
+    .id {
+        float: left;
+        margin: 10px 20px;
+        font-size: 22px;
+    }
+    #timeDiv {
+        position: relative;
+        float: right;
+        right: 50px;
+        margin: 35px 0px 0px 0px;
+        font-size: 14px;
+    }
+</style>
+<script type="text/javascript">
+    $.get("/api/exampaper/noPage", function (data) {
+        $(data).each(function (index, item) {
+            $("#tbody").append("<tr>" +
+                "<td>" + item.id + "</td>" +
+                "<td>" + item.createTime + "</td>" +
+                "<td>" + item.keyword + "</td>" +
+                "<td>" +
+                "<i class='icon icon-download-alt' onclick='' title='加载试卷' style='cursor:pointer'></i>" +
+                "</td>" +
+                "</tr>"
+            )
+        })
+    });
+
+    function _show(obj) {
+        // var boo = window.confirm("考试时间为60分钟 确认开始考试？")
+        // if (boo) {
+        // while (obj.nodeName != "TR") {
+        //     obj = obj.parentNode;
+        // }
+        // var idx = obj.rowIndex;
+        // var id = obj.getElementsByTagName("td")[0].innerHTML;
+        // $.get("/api/exampaper/" + id, function (data) {
+        //     $(data).each(function (index, item) {
+        //         $("#title").val(item.title)
+        //         $("#option").val(item.option)
+        //         $("#hr").append("<hr width='95%'>")
+        //     })
+        // })
+        document.getElementById("conver").style.display = "block";
+        document.getElementById("show").style.display = "block";
+        document.getElementById("tb").style.display = "none";
+        document.getElementById("nav").style.display = "none";
+        document.getElementById("search").style.display = "none";
+        $("#id").append(id)
+    }
+    // }
+    function _close() {
+        window.location.href = "onlinetest.html";
+    }
+    function _submit() {
+        var boo = window.confirm("确认交卷？")
+        if (boo) {
+            _close()
+        }
+    }
+</script>
+
+<script>
+    $(function () {
+        var times = 60 * 60;
+        var timeDiv = document.getElementById("time");
+        var timeObj = null;
+
+        function time() {
+            if (times == 0) {
+                _submit();
+                window.clearInterval(timeObj);
+                return;
+            }
+            var time = Math.floor(times / 60) + "分" + times % 60 + "秒"
+            timeDiv.innerHTML = time;
+            times--;
+        }
+
+        timeObj = window.setInterval(time, 1000);
+    })
+
+</script>
+
+<body>
+<nav class="navbar" id="nav" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="font-size:30px" href="student.html">首页</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-collapse-example">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="onlinetest.html">在线考试</a>
+                </li>
+                <li>
+                    <a href="myScores.html">我的成绩</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>学生</li>
+                <li>
+                    <a data-toggle="dropdown" style="font-size:16px">
+                        <span id="username"></span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="updUserPassword.html">修改密码</a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout">退出</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<table class="table table-hover" id="tb">
+    <div class="input-group"  style="width: 250px;float: right;right: 20px;position:relative;" id="search">
+        <div class="input-control search-box search-box-circle has-icon-left">
+            <input id="inputSearchExample3" type="search" class="form-control search-input" placeholder="搜索">
+            <label for="inputSearchExample3" class="input-control-icon-left search-icon"><i
+                    class="icon icon-search"></i></label>
+        </div>
+        <span class="input-group-btn">
+            <button class="btn btn-primary" type="button">搜索</button>
+        </span>
+    </div>
+    <br>
+    <thead>
+    <tr>
+        <th style="width:180px;">试卷id</th>
+        <th style="width:180px;">创建时间</th>
+        <th style="width:180px;">关键词</th>
+        <th style="width:210px;">操作</th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+    <tr>
+        <td>1</td>
+        <td>2018-1-1</td>
+        <td>key</td>
+        <td>
+            <i class="icon icon-download-alt" onclick="_show(this)" title="加载试卷" style="cursor:pointer"></i>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!--<div class="pager" id="pager">-->
+    <!--<li class="pager-item-left">-->
+        <!--<a class="pager-item" data-page="1" href="#page=1">-->
+            <!--<i class="icon icon-step-backward"></i>-->
+        <!--</a>-->
+    <!--</li>-->
+    <!--<li class="disabled">-->
+        <!--<a class="pager-item" data-page="0" href="###">-->
+            <!--<i class="icon icon-double-angle-left"></i>-->
+        <!--</a>-->
+    <!--</li>-->
+    <!--<li class="active">-->
+        <!--<a class="pager-item" data-page="1" href="#page=1">1</a>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<a class="pager-item" data-page="2" href="#page=2">2</a>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<a class="pager-item" data-page="3" href="#page=3">3</a>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<a class="pager-item" data-page="4" href="#page=4">4</a>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<a class="pager-item" data-page="5" href="#page=5">5</a>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<a class="pager-item" data-page="6" href="#page=6">6</a>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<a class="pager-item" data-page="2" href="#page=2">-->
+            <!--<i class="icon icon-double-angle-right"></i>-->
+        <!--</a>-->
+    <!--</li>-->
+    <!--<li class="pager-item-right">-->
+        <!--<a class="pager-item" data-page="10" href="#page=10">-->
+            <!--<i class="icon icon-step-forward"></i>-->
+        <!--</a>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<div class="pager-label">第-->
+            <!--<strong>1</strong>/-->
+            <!--<strong>10</strong> 页-->
+        <!--</div>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<div class="pager-label">第-->
+            <!--<strong>1</strong> ~-->
+            <!--<strong>10</strong> 项-->
+        <!--</div>-->
+    <!--</li>-->
+    <!--<li>-->
+        <!--<div class="pager-label">共-->
+            <!--<strong>100</strong> 项-->
+        <!--</div>-->
+    <!--</li>-->
+<!--</div>-->
+
+<div id="conver">
+    <div id="show">
+        <strong class="id">
+            试题ID:
+            <span id="id"></span>
+        </strong>
+        <div id="timeDiv">
+            剩余时间:<span id="time"></span>
+        </div>
+        <hr style="clear: both;"/>
+        <form id="testPaper" class="form-horizontal">
+            <br>
+            <div class="form-group">
+                <label class="col-sm-2" style="width:100px;">题目:
+                    <span id="title"></span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2" style="width:100px;">选项:
+                    <span id="option"></span>
+                </label>
+            </div>
+            <div class="form-group" id="hr">
+                <hr width="95%">
+            </div>
+            <br>
+            <div style="text-align:right;width: 95%;">
+                <button type="button" class="btn" onclick="_submit()">交卷</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+</html>

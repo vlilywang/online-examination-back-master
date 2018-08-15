@@ -17,7 +17,7 @@
 <script type="text/javascript">
     $(function () {
         $.get("api/user?page=1&pageSize=6", function (data) {
-            $(data.content).each(function (index, item) {
+            $(data.data.content).each(function (index, item) {
                 $("#body").append("<tr>" +
                     "<td>" +
                     "<input type='checkbox' value='1' name='single'>" +
@@ -28,13 +28,13 @@
                     "<td>" + item.name + "</td>" +
                     "<td>" + item.role.name + "</td>" +
                     "<td>" +
-                    "<button class='btn' onclick='_show(this)' title='编辑用户'>" +
+                    "<button class='btn' onclick='_show1(this)' title='编辑用户'>" +
                     "<i class='icon icon-edit' id='edit'></i>" +
                     "</button>" +
                     "<button class='btn' onclick='_delete(this)' title='删除用户'>" +
                     "<i class='icon icon-cut' id='delete'></i>" +
                     "</button>" +
-                    "<button class='btn' onclick='_updUserPass(this)' title='修改密码'>" +
+                    "<button class='btn' onclick='_show2(this)' title='修改密码'>" +
                     "<i class='icon icon-key'></i>" +
                     "</button>" +
                     "</td>" +
@@ -43,21 +43,43 @@
         })
     })
 
-    function _show(obj) {
+    function _show1(obj) {
+        while (obj.nodeName != "TR") {
+            obj = obj.parentNode;
+        }
+        var idx = obj.rowIndex;
+        var id = obj.getElementsByTagName("td")[1].innerHTML;
+        $.get("/api/user/" + id, function (data) {
+            $(data).each(function (index, item) {
+                $("#name").val(item.name)
+            })
+        })
+        var w = document.body.clientWidth;
+        w = w / 2 - 350;
+        document.getElementById("conver").style.display = "block";
+        document.getElementById("show1").style.display = "block";
+        document.getElementById("pager").style.display = "none";
+        document.getElementById("main").style.display = "none";
+        document.getElementById("show1").style.left = w + "px";
+        document.getElementById("show1").style.top = 120 + "px";
+        $(".id").append(id)
+    }
+
+    function _show2(obj) {
         while (obj.nodeName != "TR") {
             obj = obj.parentNode;
         }
         var idx = obj.rowIndex;
         var id = obj.getElementsByTagName("td")[1].innerHTML;
         var w = document.body.clientWidth;
-        w = w / 2 - 350;
+        w = w / 2 - 300;
         document.getElementById("conver").style.display = "block";
-        document.getElementById("show").style.display = "block";
+        document.getElementById("show2").style.display = "block";
         document.getElementById("pager").style.display = "none";
         document.getElementById("main").style.display = "none";
-        document.getElementById("show").style.left = w + "px";
-        document.getElementById("show").style.top = 120 + "px";
-        $("#id").append(id)
+        document.getElementById("show2").style.left = w + "px";
+        document.getElementById("show2").style.top = 120 + "px";
+        $(".id").append(id)
     }
 
     function _close() {
@@ -65,18 +87,13 @@
     }
 
     function _updUser() {
-        var id = $("#id").text();
-        var name = document.getElementById("name").value;
-        var typeId = document.getElementById("type").value;
-        if (typeId == "学生") {
-            roleId = 2;
-        } else {
-            roleId = 1;
-        }
+        var id = $("#id1").text();
+        var name = $("#name").val();
+        var typeId = $("#type").val();
         $.ajax({
             type: "PUT",
             url: "/api/user/" + id,
-            data: JSON.stringify({name: name, roleId: roleId}),
+            data: JSON.stringify({ name: name, roleId: typeId }),
             contentType: "application/json",
             success: function (data) {
                 alert("用户信息修改成功！")
@@ -87,14 +104,26 @@
             }
         });
     }
+
     function _updUserPass() {
-        while (obj.nodeName != "TR") {
-            obj = obj.parentNode;
-        }
-        var idx = obj.rowIndex;
-        var id = obj.getElementsByTagName("td")[1].innerHTML;
+        var id = $("#id2").text();
+        var newPass = $("#newPass").val();
+        $.ajax({
+            type: "PUT",
+            url: "/api/user/" + id + "/password",
+            data: JSON.stringify({ newPassword: newPass }),
+            contentType: "application/json",
+            success: function (data) {
+                alert("用户密码修改成功！")
+                window.location.href = "updateUser.html"
+            },
+            error: function (data) {
+                console.log(JSON.stringify(data))
+            }
+        });
     }
 </script>
+
 <body>
 <nav class="navbar" role="navigation">
     <div class="container-fluid">
@@ -153,7 +182,7 @@
                 </a>
             </li>
             <li>
-                <a href="selectUser.html">
+                <a href="selectUsers.html">
                     <i class="icon icon-time"></i>查询用户
                 </a>
             </li>
@@ -240,15 +269,16 @@
     </li>
 </div>
 <div id="conver">
-    <div id="show">
+    <div id="show1">
         <strong style="font-size:22px">
-            您正在修改ID:
-            <span id="id"></span>
+            您正在修改用户ID:
+            <span class="id" id="id1"></span>
             的信息
         </strong>
         <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
-        <hr style="clear: right;"/>
-        <form id="upd" class="form-horizontal">
+        <hr style="clear: right;" />
+        <form id="upd1" class="form-horizontal">
+            <br>
             <div class="form-group">
                 <label class="col-sm-2 required" style="width:100px;">真实姓名</label>
                 <input type="text" class="form-control" id="name" style="width:500px;" placeholder="真实姓名">
@@ -264,7 +294,27 @@
             <br>
             <br>
             <div style="text-align:right;width:650px">
-                <button type="button" class="btn" onclick="javascript:_updUser()">确认修改</button>
+                <button type="button" class="btn" onclick="_updUser()">确认修改</button>
+            </div>
+        </form>
+    </div>
+    <div id="show2">
+        <strong style="font-size:22px">
+            您正在修改用户ID:
+            <span class="id" id="id2"></span>
+            的密码
+        </strong>
+        <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
+        <hr style="clear: right;" />
+        <form id="upd2" class="form-horizontal">
+            <br>
+            <div class="form-group">
+                <label class="col-sm-2 required" style="width:100px;">新密码</label>
+                <input type="text" class="form-control" id="newPass" style="width:400px;" placeholder="新密码">
+            </div>
+            <br>
+            <div style="text-align:right;width:550px">
+                <button type="button" class="btn" onclick="_updUserPass()">确认修改</button>
             </div>
         </form>
     </div>

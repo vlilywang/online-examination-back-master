@@ -12,12 +12,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(value = "/api/user")
+// 搜索用户接口 关键词未实现
 public class UserController {
     private UserService userService;
 
@@ -59,11 +61,6 @@ public class UserController {
 //        return ResultData.success(userService.current());
 //    }
 
-    // 获取用户列表 不分页
-//    @RequestMapping(value = "", method = RequestMethod.GET)
-//    public ResponseEntity list() {
-//        return ResultData.success(userService.list());
-//    }
 
     // 新建用户
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -172,17 +169,56 @@ public class UserController {
         }
         return ResultData.success(userService.update(user, name, role));
     }
+    // 考完试后修改用户is_used状态
+    // 修改用户 isDeleted == 0
+    @RequestMapping(value = "/update/isUsed/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity updateIsUsed(@PathVariable Long id) throws Exception {
+        User user = userService.get(id);
+        if (user == null) {
+            return ResultData.error("该用户不存在");
+        }
+        return ResultData.success(userService.update(user));
+    }
 
     // 删除用户 isDeleted == 0
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/id/{id}", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity delete(@PathVariable Long id) {
         User user = userService.get(id);
         if (user == null) {
             return ResultData.error("id参数不正确");
         }
-        userService.delete(user);
+        if (user.getIsUsed().equals(0)) {
+            userService.delete(user);
+        } else {
+            return ResultData.error("该用户已经考过试，不能删除");
+        }
+
         return ResultData.success();
+    }
+
+    // 批量删除用户 isDeleted == 0
+    @RequestMapping(value = "/delete/ids/{ids}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity deleteIds(@PathVariable List<Long> ids) {
+          List<User> users = new ArrayList<>();
+        for (Integer i = 0; i < ids.size(); i++) {
+            User user = userService.get(ids.get(i));
+            if (user != null && user.getIsUsed().equals(0)) {
+                users.add(user);
+            } else {
+                return ResultData.error("用户不存在/用户考过试，不能删");
+            }
+        }
+        try{
+            for (Integer i = 0; i< users.size(); i++) {
+                userService.delete(users.get(i));
+            }
+            return ResultData.success();
+        } catch (Exception e) {
+            return ResultData.error(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/roles", method = RequestMethod.GET)

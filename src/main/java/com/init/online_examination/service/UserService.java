@@ -51,6 +51,7 @@ public class UserService implements UserDetailsService {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
+                predicateList.add(criteriaBuilder.equal(root.get("isDeleted").as(Integer.class), 0));
                 if (keyword != null && keyword.length != 0) {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("keyword")));
                     predicateList.add(criteriaBuilder.like(root.get("keyword").as(String.class), "%" + keyword + "%"));
@@ -59,16 +60,14 @@ public class UserService implements UserDetailsService {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("role")));
                     predicateList.add(criteriaBuilder.equal(root.get("role").as(Role.class), role));
                 }
-                System.out.println("beginTime:" + beginTime);
-                System.out.println("endTime:" + endTime);
                 if (beginTime != null || endTime != null) {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("createTime")));
                 }
                 if (beginTime != null) {
-                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("beginTime").as(Date.class), beginTime));
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(Date.class), beginTime));
                 }
                 if (endTime != null) {
-                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get("endTime").as(Date.class), endTime));
+                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(Date.class), endTime));
                 }
                 Predicate[] arrayType = new Predicate[predicateList.size()];
                 return criteriaBuilder.and(predicateList.toArray(arrayType));
@@ -115,6 +114,7 @@ public class UserService implements UserDetailsService {
         user = new User();
         user.setName(name);
         user.setUsername(username);
+        user.setIsUsed(0);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setPassword(encoder.encode(password));
         user.setRole(role);
@@ -140,6 +140,14 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
         return user;
     }
+
+    // 修改用户is_used状态
+    public User update(User user) throws Exception {
+        user.setIsUsed(1);
+        userRepository.save(user);
+        return user;
+    }
+
     public Role getRole(Long id ){
         return roleRepository.findFirstById(id);
     }

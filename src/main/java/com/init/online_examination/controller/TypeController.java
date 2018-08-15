@@ -19,12 +19,4 @@ public class TypeController {
         this.typeService = typeService;
     }
 
-//    @RequestMapping(name = "", method = RequestMethod.GET)
-//    public ResponseEntity all() {
-//        return ResultData.success(typeService.findAll());
-//    }
-//    @RequestMapping(name = "/{id}", method = RequestMethod.GET)
-//    public ResponseEntity findById(@PathVariable Long id) {
-//        return ResultData.success(typeService.findById(id));
-//    }
 }

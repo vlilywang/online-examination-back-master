@@ -29,6 +29,7 @@
 	width: 300px;
 	border-collapse: collapse;
 	margin: auto;
+
 }
 #tb1 td{
 	border: 1px solid;
@@ -44,7 +45,7 @@
 	opacity: 0.8;
 	display: none;
 }
-#show{
+#show1 {
 	width: 700px;
 	height: 350px;
 	background: white;
@@ -53,10 +54,16 @@
 	display: none;
 	border-radius: 2%;
 }
-#upd {
-	width: 380px;
+#show2 {
+	width: 600px;
+	height: 250px;
+	background: white;
+	position: relative;
+	z-index: 101;
+	display: none;
+	border-radius: 2%;
 }
-#upd input, #upd select {
+#upd1 input, #upd1 select {
 	position: relative;
 	left: 25px;
 }

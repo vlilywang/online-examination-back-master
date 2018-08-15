@@ -38,6 +38,7 @@ public class ExamPaperService {
             @Override
             public Predicate toPredicate(Root<ExamPaper> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
+                predicateList.add(criteriaBuilder.equal(root.get("isDeleted").as(Integer.class), 0));
                 if (keyword != null && keyword.length != 0) {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("keyword")));
                     predicateList.add(criteriaBuilder.like(root.get("keyword").as(String.class), "%" + keyword + "%"));
@@ -46,10 +47,10 @@ public class ExamPaperService {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("createTime")));
                 }
                 if (beginTime != null) {
-                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("beginTime").as(Date.class), beginTime));
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(Date.class), beginTime));
                 }
                 if (endTime != null) {
-                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get("endTime").as(Date.class), endTime));
+                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(Date.class), endTime));
                 }
                 Predicate[] arrayType = new Predicate[predicateList.size()];
                 return criteriaBuilder.and(predicateList.toArray(arrayType));
@@ -68,11 +69,14 @@ public class ExamPaperService {
         examPaper.setMultiAmount(multiAmount);
         examPaper.setJudgeAmount(judgeAmount);
         examPaper.setDuration(60);
+        examPaper.setIsUsed(0);
         examPaper.setKeyword(keyword);
         examPaper.setTitle(title);
-        System.out.println("singleAmount::" + singleAmount);
         List<Question> questions = questionRepository.getQuestionsRand(1L, singleAmount);
+        questions.addAll(questionRepository.getQuestionsRand(2L, multiAmount));
+        questions.addAll(questionRepository.getQuestionsRand(3L, judgeAmount));
         examPaper.setQuestions(questions);
+        // 此处缺少试题isUsed变为1
         examPaperRepository.save(examPaper);
         return examPaper;
     }
@@ -89,6 +93,17 @@ public class ExamPaperService {
     // 删除试卷
     public void delete(ExamPaper examPaper) {
         examPaper.setIsDeleted(1);
+        // 此处缺少试题isUsed变为0
         examPaperRepository.save(examPaper);
+    }
+    public Long count() {
+        return examPaperRepository.count();
+    }
+
+    // 修改用户is_used状态
+    public ExamPaper update(ExamPaper examPaper) throws Exception {
+        examPaper.setIsUsed(1);
+        examPaperRepository.save(examPaper);
+        return examPaper;
     }
 }

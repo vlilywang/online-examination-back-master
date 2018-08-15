@@ -2,6 +2,7 @@ package com.init.online_examination.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -29,7 +30,11 @@ public class ExamPaper {
     @Column(name = "keyword")
     private String keyword;
     @Column(name = "is_deleted")
+    @JsonIgnore
     private Integer isDeleted;
+    @Column(name = "is_used")
+    @JsonIgnore
+    private Integer isUsed;
     @ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
     private List<Question> questions;
 //    @ManyToMany(cascade = {CascadeType.PERSIST})
@@ -118,5 +123,13 @@ public class ExamPaper {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public Integer getIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(Integer isUsed) {
+        this.isUsed = isUsed;
     }
 }

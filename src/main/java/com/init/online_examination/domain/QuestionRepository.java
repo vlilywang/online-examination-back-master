@@ -12,8 +12,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long>, JpaSp
     List<Question> findAllByTypeAndIsDeleted(Type type, Integer isDeleted);
     Integer countByTypeAndIsDeleted(Type type, Integer isDeleted);
 
+    @Query(value = "")
+    Question findDetailByIdAndIsDeleted(Long id, Integer isDeleted);
     @Query(value = "SELECT * FROM question where type_id = ?1 ORDER BY rand() LIMIT ?2", nativeQuery = true)
     List<Question> getQuestionsRand(Long typeId, Integer number);
+
+
 //        @Query("select id from question")
 //        Long[] findAllId();
 //        @Query("select id from question where type_id = ?1 and is_deleted=0")

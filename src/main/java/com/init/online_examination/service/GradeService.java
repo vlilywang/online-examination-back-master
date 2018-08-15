@@ -2,8 +2,17 @@ package com.init.online_examination.service;
 
 import com.init.online_examination.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +22,12 @@ public class GradeService {
     private GradeRepository gradeRepository;
     private QuestionRepository questionRepository;
     private UserRepository userRepository;
+    private ExamPaperRepository examPaperRepository;
+
+    @Autowired
+    public void setExamPaperRepository(ExamPaperRepository examPaperRepository) {
+        this.examPaperRepository = examPaperRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -32,6 +47,37 @@ public class GradeService {
 //    public Grade findGradeByIds(Long userId, Long exampaperId) {
 //        return gradeRepository.findFirstByUserIdAndExamId(userId, exampaperId);
 //    }
+
+    public Page<Grade> find(Date beginTime, Date endTime, User user, ExamPaper examPaper, Integer page, Integer pageSize) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Specification<Grade> specification = new Specification<Grade>() {
+            @Override
+            public Predicate toPredicate(Root<Grade> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicateList = new ArrayList<>();
+                if (user != null) {
+                    predicateList.add(criteriaBuilder.isNotNull(root.get("user")));
+                    predicateList.add(criteriaBuilder.equal(root.get("user").as(User.class), user));
+                }
+                if (examPaper != null) {
+                    predicateList.add(criteriaBuilder.isNotNull(root.get("examPaper")));
+                    predicateList.add(criteriaBuilder.equal(root.get("examPaper").as(ExamPaper.class), examPaper));
+                }
+                if (beginTime != null || endTime != null) {
+                    predicateList.add(criteriaBuilder.isNotNull(root.get("createTime")));
+                }
+                if (beginTime != null) {
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(Date.class), beginTime));
+                }
+                if (endTime != null) {
+                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(Date.class), endTime));
+                }
+                Predicate[] arrayType = new Predicate[predicateList.size()];
+                return criteriaBuilder.and(predicateList.toArray(arrayType));
+            }
+        };
+        return gradeRepository.findAll(specification, PageRequest.of(page - 1, pageSize, sort));
+    }
+
     // 获取全部成绩 不分页 什么都不分
     public List<Grade> findAll() {
         return gradeRepository.findAll();
@@ -89,7 +135,22 @@ public class GradeService {
         }
         grade.setGrade(currentGrade);
         gradeRepository.save(grade);
+
+        user.setIsUsed(1);
+        userRepository.save(user);
+        examPaper.setIsUsed(1);
+        examPaperRepository.save(examPaper);
         return grade;
+    }
+
+    public Long count() {
+        return gradeRepository.count();
+    }
+    public Long countByUser(User user) {
+        return gradeRepository.countByUser(user.getId());
+    }
+    public Long countByExampaper(ExamPaper examPaper) {
+        return gradeRepository.countByExampaper(examPaper.getId());
     }
 }
 

@@ -9,6 +9,7 @@
     <script src="js/zui.min.js"></script>
     <script src="lib/chart/zui.chart.min.js"></script>
     <script src="js/getUsername.js"></script>
+    <script src="js/addQuestion.js"></script>
     <link rel="stylesheet" href="css/zui.min.css">
 </head>
 <style type="text/css">
@@ -30,79 +31,6 @@
         font-size: 20px;
     }
 </style>
-<script type="text/javascript">
-    function showAnswer() {
-        var type = document.getElementById("type").value;
-        if (type == 1) {
-            $("#tr").append(
-                "<td>" +
-                "<input type='radio' name='1' value='A' class='answers'>A</td>" +
-                "<td>" +
-                "<input type='radio' name='1' value='B' class='answers'>B</td>" +
-                "<td>" +
-                "<input type='radio' name='1' value='C' class='answers'>C</td>" +
-                "<td>" +
-                "<input type='radio' name='1' value='D' class='answers'>D</td>"
-            )
-        } else if (type == 2) {
-            $("#tr").append(
-                "<td>" +
-                "<input type='checkbox' value='A' class='answers'>A</td>" +
-                "<td>" +
-                "<input type='checkbox' value='B' class='answers'>B</td>" +
-                "<td>" +
-                "<input type='checkbox' value='C' class='answers'>C</td>" +
-                "<td>" +
-                "<input type='checkbox' value='D' class='answers'>D</td>"
-            )
-        } else {
-            $("#tr").append(
-                "<td>" +
-                "<input type='radio' name='radio' value='true' class='answers'>&check;</td>" +
-                "<td>" +
-                "<input type='radio' name='radio' value='false' class='answers'>&times;</td>"
-            )
-        }
-    }
-
-    function save() {
-        var typeId = $("#type").val();
-        var title = $("#title").val();
-        var option = $("#option").val();
-        var answers = document.getElementsByClassName("answers");
-        var answer = "";
-        for (var i = 0; i < answers.length; i++) {
-            if (answers[i].checked) {
-                answer += answers[i].value
-            }
-        }
-        if (type == "" || title == "" || option == "" || answer == "") {
-            alert("试题内容不能为空");
-        } else {
-            $.ajax({
-                type: "POST",
-                url: "/api/question",
-                data: JSON.stringify({
-                    title: title,
-                    answer: answer,
-                    typeId: typeId,
-                    keyword: "关键词",
-                    option: "qq,ww,ee,rr"
-                }),
-                contentType: "application/json",
-                success: function (data) {
-                    alert("增加成功")
-                    window.location.href = "questions.html"
-                },
-                error: function (data) {
-                    alert("增加失败")
-                    console.log(JSON.stringify(data.responseText))
-                }
-            });
-        }
-
-    }
-</script>
 
 <body>
 <nav class="navbar" role="navigation">
@@ -156,7 +84,7 @@
                 </a>
             </li>
             <li>
-                <a href="addQuestions.html">
+                <a href="addQuestion.html">
                     <i class="icon icon-user"></i>新增试题
                 </a>
             </li>
@@ -183,6 +111,7 @@
             <tr>
                 <td colspan="4">
                     <select class="form-control" id="type">
+                        <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
                         <option value="1">单选题</option>
                         <option value="2">多选题</option>
                         <option value="3">判断题</option>
@@ -204,7 +133,7 @@
             </tbody>
             <thead>
             <tr>
-                <th colspan="4">请输入选项</th>
+                <th colspan="4">请输入选项 </th>
             </tr>
             </thead>
             <tbody>
@@ -216,8 +145,20 @@
             </tbody>
             <thead>
             <tr>
+                <th colspan="4">请输入关键字</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="4">
+                    <textarea class="form-control" rows="5" placeholder="请输入关键字" id="keyword"></textarea>
+                </td>
+            </tr>
+            </tbody>
+            <thead>
+            <tr>
                 <th colspan="4">
-                    <input type="button" class="btn" onclick="showAnswer()" value="答案">
+                    <input type="button" class="btn" onclick="_showAnswer()" value="答案">
                 </th>
             </tr>
             </thead>
@@ -226,7 +167,7 @@
             </tr>
             <tr>
                 <td style="text-align:right" colspan="4">
-                    <input type="button" class="btn btn-primary" onclick="save()" value="保存">
+                    <input type="button" class="btn btn-primary" onclick="_save()" value="保存">
                 </td>
             </tr>
             </tbody>

@@ -9,7 +9,7 @@ function _delete(obj){
         document.getElementById("tb").deleteRow(idx);
         $.ajax({
             type : "DELETE",
-            url:"/api/question/"+id,
+            url:"/api/question/delete/id/"+id,
             success : function(data) {
                 alert("试题删除成功！")
                 console.log(JSON.stringify(data))

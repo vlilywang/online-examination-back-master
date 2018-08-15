@@ -23,3 +23,27 @@
   position: relative;
   left: 350px;
 }
+#conver{
+  width: 100%;
+  height: 100%;
+  background: black;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 100;
+  opacity: 0.8;
+  display: none;
+}
+#show {
+  width: 720px;
+  height: 400px;
+  background: white;
+  position: relative;
+  z-index: 101;
+  display: none;
+  border-radius: 2%;
+}
+#upd input, #upd select {
+  position: relative;
+  left: 25px;
+}

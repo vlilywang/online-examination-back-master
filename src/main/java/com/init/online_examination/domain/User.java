@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @Column(name = "is_deleted")
     @JsonIgnore
     private Integer isDeleted;
+    @Column(name = "is_used")
+    @JsonIgnore
+    private Integer isUsed; // 默认为0，如果考过试则为1，为0时可删
     @Column(name = "create_time")
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
@@ -118,14 +121,13 @@ public class User implements UserDetails {
         this.isDeleted = isDeleted;
     }
 
-//
-//    public Grade getGrade() {
-//        return grade;
-//    }
-//
-//    public void setGrade(Grade grade) {
-//        this.grade = grade;
-//    }
+    public Integer getIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(Integer isUsed) {
+        this.isUsed = isUsed;
+    }
 
     public Date getCreateTime() {
         return createTime;

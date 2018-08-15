@@ -30,26 +30,24 @@ public class Question {
     @Column(name = "is_deleted")
     @JsonIgnore
     private Integer isDeleted;
-//    @ManyToMany(mappedBy="questions", cascade = {CascadeType.PERSIST})
+    @Column(name = "is_used")
+    @JsonIgnore
+    private Integer isUsed;
+    //    @ManyToMany(mappedBy="questions", cascade = {CascadeType.PERSIST})
 //    private List<ExamPaper> exampaper;//试题持有的试卷的集合？
 //
+    @OneToMany
+    @JoinColumn(name = "option_id")
+    private List<Option> options;
 
-    public Question(Long id) {
-        this.id = id;
+    public List<Option> getOptions() {
+        return options;
     }
 
-    public Question() {
+    public void setOptions(List<Option> options) {
+        this.options = options;
     }
 
-    public Question(String title, String[] answer, Type type, Float perValue, Date createTime, String keyword, Integer isDeleted, List<ExamPaper> exampaper) {
-        this.title = title;
-        this.answer = answer;
-        this.type = type;
-        this.perValue = perValue;
-        this.createTime = createTime;
-        this.keyword = keyword;
-        this.isDeleted = isDeleted;
-    }
 
     public Long getId() {
         return id;
@@ -114,5 +112,13 @@ public class Question {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public Integer getIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(Integer isUsed) {
+        this.isUsed = isUsed;
     }
 }

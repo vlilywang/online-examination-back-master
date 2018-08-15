@@ -27,7 +27,13 @@
                     data: { username: username, password: password },
                     dataType: "html",
                     success: function (data) {
-                        window.location.href = "teacher.html";
+                        $.get("/api/user/current", function (data) {
+                            if(data.role.id == 1) {
+                                window.location.href = "teacher.html";
+                            } else {
+                                window.location.href = "student.html";
+                            }
+                        })
                     },
                     error: function (data) {
                         alert("用户名或密码错误")

@@ -3,66 +3,223 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>scores</title>
+  <title>grade</title>
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="js/template-web.js"></script>
   <script src="js/zui.min.js"></script>
   <script src="lib/chart/zui.chart.min.js"></script>
   <script src="js/getUsername.js"></script>
+  <script src="js/checkbox.js"></script>
+  <script src="js/deletePaper.js"></script>
   <link rel="stylesheet" href="css/zui.min.css">
+  <link rel="stylesheet" href="css/scores.css">
 </head>
-<style type="text/css">
-  .navbar {
-    height: 100px;
-    font-size: 20px;
+<script type="text/javascript">
+    $.get("/api/exampaper/1", function (data) {
+        $(data).each(function (index, item) {
+            $("#tbody").append("<tr>" +
+                "<td>" + item.id + "</td>" +
+                "<td>" + item.createTime + "</td>" +
+                "<td>" + item.keyword + "</td>" +
+                "<td>" + item.singleAmount + "</td>" +
+                "<td>" + item.multiAmount + "</td>" +
+                "<td>" + item.judgeAmount + "</td>" +
+                "<td>" +
+                "<i class='icon icon-list-alt' onclick='_show(this)' title='查看成绩' style='cursor:pointer'></i>" +
+                "</td>" +
+                "</tr>"
+            )
+        })
+    })
+  function _show(obj) {
+      // while (obj.nodeName != "TR") {
+      //     obj = obj.parentNode;
+      // }
+      // var idx = obj.rowIndex;
+      // var id = obj.getElementsByTagName("td")[0].innerHTML;
+      // $.get("/api/exampaper/" + id, function (data) {
+      //     $(data).each(function (index, item) {
+      //         $("#title").val(item.title)
+      //         $("#option").val(item.option)
+      //         $("#hr").append("<hr width='95%'>")
+      //     })
+      // })
+      var w = document.body.clientWidth;
+      w = w / 2 - 500;
+      document.getElementById("conver").style.display = "block";
+      document.getElementById("show").style.display = "block";
+      document.getElementById("pager").style.display = "none";
+      document.getElementById("main").style.display = "none";
+      document.getElementById("nav").style.display = "none";
+      document.getElementById("show").style.left = w + "px";
+      document.getElementById("show").style.top = 60 + "px";
+      $("#id").append(id)
   }
-</style>
+    function _close() {
+        window.location.href = "scores.html";
+    }
+</script>
 
 <body>
-  <nav class="navbar" role="navigation">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
-      </div>
-      <div class="collapse navbar-collapse navbar-collapse-example">
-        <ul class="nav navbar-nav">
-          <li>
-            <a href="updateUser.html">用户管理</a>
-          </li>
-          <li>
-            <a href="questions.html">试题管理</a>
-          </li>
-          <li>
-            <a href="paper.html">试卷管理</a>
-          </li>
-          <li>
-            <a href="scores.html">学生成绩查询</a>
-          </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li>教师</li>
-          <li>
-            <a data-toggle="dropdown" style="font-size:16px">
-              <span id="username"></span>
-              <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#">个人信息</a>
-              </li>
-              <li>
-                <a href="updPassword.html">修改密码</a>
-              </li>
-              <li>
-                <a href="/auth/logout">退出</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+<nav class="navbar" id="nav" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
     </div>
-  </nav>
-
+    <div class="collapse navbar-collapse navbar-collapse-example">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="updateUser.html">用户管理</a>
+        </li>
+        <li>
+          <a href="questions.html">试题管理</a>
+        </li>
+        <li>
+          <a href="paper.html">试卷管理</a>
+        </li>
+        <li>
+          <a href="scores.html">学生成绩查询</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>教师</li>
+        <li>
+          <a data-toggle="dropdown" style="font-size:16px">
+            <span id="username"></span>
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="#">个人信息</a>
+            </li>
+            <li>
+              <a href="updPassword.html">修改密码</a>
+            </li>
+            <li>
+              <a href="/auth/logout">退出</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div id="main">
+  <table class="table table-hover" id="tb">
+    <thead>
+    <tr>
+      <th style="width:80px;">试卷id</th>
+      <th style="width:150px;">创建时间</th>
+      <th style="width:170px;">关键词</th>
+      <th style="width:150px;">单选题数量</th>
+      <th style="width:150px;">多选题数量</th>
+      <th style="width:150px;">判断题数量</th>
+      <th style="width:150px;">操作</th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+      <i class='icon icon-list-alt' onclick='_show(this)' title='查看成绩' style='cursor:pointer'></i>
+    </tbody>
+  </table>
+</div>
+<!--<div id="main">-->
+  <!--<div class="title">-->
+    <!--<h3>最新试卷</h3>-->
+  <!--</div>-->
+  <!--<table cellpadding="0" cellspacing="0" border="0" id="tb">-->
+    <!--<thead>-->
+    <!--<tr>-->
+      <!--<th style="width:80px;">试卷id</th>-->
+      <!--<th style="width:150px;">创建时间</th>-->
+      <!--<th style="width:170px;">关键词</th>-->
+      <!--<th style="width:150px;">单选题数量</th>-->
+      <!--<th style="width:150px;">多选题数量</th>-->
+      <!--<th style="width:150px;">判断题数量</th>-->
+      <!--<th style="width:150px;">操作</th>-->
+    <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody id="tbody">-->
+    <!--</tbody>-->
+  <!--</table>-->
+<!--</div>-->
+<div class="pager" id="pager">
+  <li class="pager-item-left">
+    <a class="pager-item" data-page="1" href="#page=1">
+      <i class="icon icon-step-backward"></i>
+    </a>
+  </li>
+  <li class="disabled">
+    <a class="pager-item" data-page="0" href="###">
+      <i class="icon icon-double-angle-left"></i>
+    </a>
+  </li>
+  <li class="active">
+    <a class="pager-item" data-page="1" href="#page=1">1</a>
+  </li>
+  <li>
+    <a class="pager-item" data-page="2" href="#page=2">2</a>
+  </li>
+  <li>
+    <a class="pager-item" data-page="3" href="#page=3">3</a>
+  </li>
+  <li>
+    <a class="pager-item" data-page="4" href="#page=4">4</a>
+  </li>
+  <li>
+    <a class="pager-item" data-page="5" href="#page=5">5</a>
+  </li>
+  <li>
+    <a class="pager-item" data-page="6" href="#page=6">6</a>
+  </li>
+  <li>
+    <a class="pager-item" data-page="2" href="#page=2">
+      <i class="icon icon-double-angle-right"></i>
+    </a>
+  </li>
+  <li class="pager-item-right">
+    <a class="pager-item" data-page="10" href="#page=10">
+      <i class="icon icon-step-forward"></i>
+    </a>
+  </li>
+  <li>
+    <div class="pager-label">第
+      <strong>1</strong>/
+      <strong>10</strong> 页
+    </div>
+  </li>
+  <li>
+    <div class="pager-label">第
+      <strong>1</strong> ~
+      <strong>10</strong> 项
+    </div>
+  </li>
+  <li>
+    <div class="pager-label">共
+      <strong>100</strong> 项
+    </div>
+  </li>
+</div>
+<div id="conver">
+  <div id="show">
+    <strong style="font-size:22px">
+      试卷ID:
+      <span class="id" id="id1"></span>
+    </strong>
+    <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
+    <hr style="clear: both;"/>
+    <table class="table table-hover" id="tb1">
+      <thead>
+      <tr>
+        <th style="width:300px;">学生id</th>
+        <th style="width:300px;">姓名</th>
+        <th style="width:300px;">成绩</th>
+      </tr>
+      </thead>
+      <tbody id="tbody1">
+      </tbody>
+    </table>
+  </div>
+</div>
 </body>
 
 </html>
