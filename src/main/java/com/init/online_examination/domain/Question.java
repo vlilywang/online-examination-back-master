@@ -33,6 +33,9 @@ public class Question {
     @Column(name = "is_used")
     @JsonIgnore
     private Integer isUsed;
+    @Column(name = "used_times")
+    @JsonIgnore
+    private Integer usedTimes;
     //    @ManyToMany(mappedBy="questions", cascade = {CascadeType.PERSIST})
 //    private List<ExamPaper> exampaper;//试题持有的试卷的集合？
 //
@@ -120,5 +123,13 @@ public class Question {
 
     public void setIsUsed(Integer isUsed) {
         this.isUsed = isUsed;
+    }
+
+    public Integer getUsedTimes() {
+        return usedTimes;
+    }
+
+    public void setUsedTimes(Integer usedTimes) {
+        this.usedTimes = usedTimes;
     }
 }

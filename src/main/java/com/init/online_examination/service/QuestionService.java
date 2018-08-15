@@ -109,6 +109,7 @@ public class QuestionService {
         // 此处的answer应该给与判断，
         question.setAnswer(answer);
         question.setIsUsed(0);
+        question.setUsedTimes(0);
         int typeId = type.getId().intValue();
         if (typeId == 1) {// 单选题
             question.setPerValue(1F);
@@ -166,9 +167,6 @@ public class QuestionService {
             Option option1 = this.findOption(question.getId(), singnals[i]);
             if (option1 != null) {
                 option1.setOptions(option[i]); // 改变
-                System.out.println(option1.getId());
-                System.out.println(option1.getOptions());
-                System.out.println(option1.getSingnal());
                 optionRepository.save(option1);
                 options.add(option1);
             }

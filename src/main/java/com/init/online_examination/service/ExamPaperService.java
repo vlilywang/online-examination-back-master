@@ -75,6 +75,11 @@ public class ExamPaperService {
         List<Question> questions = questionRepository.getQuestionsRand(1L, singleAmount);
         questions.addAll(questionRepository.getQuestionsRand(2L, multiAmount));
         questions.addAll(questionRepository.getQuestionsRand(3L, judgeAmount));
+        for(int i = 0; i < questions.size(); i++ ) {
+            questions.get(i).setIsUsed(1);
+            questions.get(i).setUsedTimes(questions.get(i).getUsedTimes() + 1);
+            questionRepository.save(questions.get(i));
+        }
         examPaper.setQuestions(questions);
         // 此处缺少试题isUsed变为1
         examPaperRepository.save(examPaper);
@@ -93,7 +98,14 @@ public class ExamPaperService {
     // 删除试卷
     public void delete(ExamPaper examPaper) {
         examPaper.setIsDeleted(1);
-        // 此处缺少试题isUsed变为0
+        List<Question> questions = examPaper.getQuestions();
+        for(int i = 0; i < questions.size(); i++ ) {
+            questions.get(i).setUsedTimes(questions.get(i).getUsedTimes() - 1);
+            if (questions.get(i).getUsedTimes() - 1 == 0) {
+                questions.get(i).setIsUsed(0);
+            }
+            questionRepository.save(questions.get(i));
+        }
         examPaperRepository.save(examPaper);
     }
     public Long count() {

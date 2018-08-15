@@ -42,6 +42,10 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        User user = userRepository.findFirstByUsernameAndIsDeleted(s, 0);
+        if (user == null) {
+            throw new UsernameNotFoundException("用户不存在？？？报UserDetailsService returned null, which is an interface contract violation这个错误的地方");
+        }
         return userRepository.findFirstByUsernameAndIsDeleted(s, 0);
     }
     // 搜索
