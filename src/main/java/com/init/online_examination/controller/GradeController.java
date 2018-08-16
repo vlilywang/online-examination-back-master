@@ -20,7 +20,6 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/api/grade")
 // 提交试卷时没加答案个数的判断
-// 分页的非得走实体类的判断
 public class GradeController {
     private GradeService gradeService;
     private UserService userService;
@@ -50,14 +49,14 @@ public class GradeController {
                                @RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "20") Integer pageSize) {
         User user = null;
-        if (userId != 0) {
+        if (userId != null) {
             user = userService.get(userId);
             if (user == null) {
                 return ResultData.error("该用户不存在");
             }
         }
         ExamPaper examPaper = null;
-        if (exampaperId != 0) {
+        if (exampaperId != null) {
             examPaper = examPaperService.get(exampaperId);
             if (examPaper == null) {
                 return ResultData.error("该试卷不存在");
@@ -98,7 +97,7 @@ public class GradeController {
                                @RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "20") Integer pageSize) {
         ExamPaper examPaper = null;
-        if (exampaperId != 0) {
+        if (exampaperId != null) {
             examPaper = examPaperService.get(exampaperId);
             if (examPaper == null) {
                 return ResultData.error("该试卷不存在");
