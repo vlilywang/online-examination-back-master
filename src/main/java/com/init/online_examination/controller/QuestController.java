@@ -57,7 +57,7 @@ public class QuestController {
 
     // 新建试题
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity create(@RequestBody Map body) {
         String title = "";
         String[] answer = null;
@@ -126,7 +126,7 @@ public class QuestController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity update(@PathVariable Long id, @RequestBody Map body) {
         Question question = questionService.get(id);
         if (question == null) {
@@ -186,7 +186,7 @@ public class QuestController {
     }
     // 生成试卷后修改试题is_used状态
     @RequestMapping(value = "/update/isUsed/{id}", method = RequestMethod.PUT)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity updateIsUsed(@PathVariable Long id, @RequestBody Map body) throws Exception {
         Integer isUsed = null;
         if (body.containsKey("isUsed") && !body.get("isUsed").toString().isEmpty()) {
@@ -206,7 +206,7 @@ public class QuestController {
 
     // 删除试题
     @RequestMapping(value = "/delete/id/{id}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity delete(@PathVariable Long id) {
         Question question = questionService.get(id);
         if (question == null) {
@@ -221,7 +221,7 @@ public class QuestController {
     }
     // 批量删除试题
     @RequestMapping(value = "/delete/ids/{ids}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity deleteIds(@PathVariable List<Long> ids) {
         List<Question> questions = new ArrayList<>();
 

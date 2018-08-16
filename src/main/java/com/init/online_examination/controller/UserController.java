@@ -64,7 +64,7 @@ public class UserController {
 
     // 新建用户
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity create(@RequestBody Map body) {
         String name = "";
         String username = null;
@@ -150,7 +150,7 @@ public class UserController {
 
     // 修改用户 isDeleted == 0
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity update(@PathVariable Long id, @RequestBody Map body) throws Exception {
         String name = null;
         Role role = null;
@@ -172,7 +172,7 @@ public class UserController {
     // 考完试后修改用户is_used状态
     // 修改用户 isDeleted == 0
     @RequestMapping(value = "/update/isUsed/{id}", method = RequestMethod.PUT)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity updateIsUsed(@PathVariable Long id) throws Exception {
         User user = userService.get(id);
         if (user == null) {
@@ -183,7 +183,7 @@ public class UserController {
 
     // 删除用户 isDeleted == 0
     @RequestMapping(value = "/delete/id/{id}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity delete(@PathVariable Long id) {
         User user = userService.get(id);
         if (user == null) {
@@ -200,7 +200,7 @@ public class UserController {
 
     // 批量删除用户 isDeleted == 0
     @RequestMapping(value = "/delete/ids/{ids}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity deleteIds(@PathVariable List<Long> ids) {
           List<User> users = new ArrayList<>();
         for (Integer i = 0; i < ids.size(); i++) {

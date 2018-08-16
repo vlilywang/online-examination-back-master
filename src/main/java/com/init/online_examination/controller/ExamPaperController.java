@@ -65,7 +65,7 @@ public class ExamPaperController {
 
     // 新建试卷
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity create(@RequestBody Map body) {
         String title = "";
         String keyword = "";
@@ -133,7 +133,7 @@ public class ExamPaperController {
 
     // 删除试卷
     @RequestMapping(value = "/delete/id/{id}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity delete(@PathVariable Long id) {
         ExamPaper examPaper = examPaperService.get(id);
         if (examPaper == null) {
@@ -150,7 +150,7 @@ public class ExamPaperController {
 
     //    // 考过试后修改试题is_used状态
 //    @RequestMapping(value = "/update/isUsed/{id}", method = RequestMethod.PUT)
-//    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('TEACHER')")
 //    public ResponseEntity updateIsUsed(@PathVariable Long id, @RequestBody Map body) throws Exception {
 //        Integer isUsed = null;
 //        if (body.containsKey("isUsed") && !body.get("isUsed").toString().isEmpty()) {
@@ -168,7 +168,7 @@ public class ExamPaperController {
 //        return ResultData.success(examPaperService.update(examPaper, isUsed));
 //    }
     @RequestMapping(value = "/update/isUsed/{id}", method = RequestMethod.PUT)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity updateIsUsed(@PathVariable Long id) throws Exception {
         ExamPaper examPaper = examPaperService.get(id);
         if (examPaper == null) {
@@ -179,7 +179,7 @@ public class ExamPaperController {
 
     // 批量删除试卷 isDeleted == 0
     @RequestMapping(value = "/delete/ids/{ids}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity deleteIds(@PathVariable List<Long> ids) {
         List<ExamPaper> examPapers = new ArrayList<>();
         for (Integer i = 0; i < ids.size(); i++) {
