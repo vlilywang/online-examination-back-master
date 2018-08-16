@@ -199,7 +199,8 @@ public class QuestionService {
     }
 
     public Long count() {
-        return questionRepository.count();
+        return questionRepository.countByIsDeleted();
+//        return questionRepository.count();
     }
 
 //    public List<Option> listOptions(Question question) {

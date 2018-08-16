@@ -21,4 +21,5 @@ public interface GradeRepository extends JpaRepository<Grade, Long>, JpaSpecific
 
     @Query(value = "SELECT COUNT(*) from grade WHERE exampaper_id=?1", nativeQuery = true)
     Long countByExampaper(Long exampaperId);
+
 }

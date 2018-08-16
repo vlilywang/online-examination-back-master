@@ -101,7 +101,7 @@ public class ExamPaperService {
         List<Question> questions = examPaper.getQuestions();
         for(int i = 0; i < questions.size(); i++ ) {
             questions.get(i).setUsedTimes(questions.get(i).getUsedTimes() - 1);
-            if (questions.get(i).getUsedTimes() - 1 == 0) {
+            if (questions.get(i).getUsedTimes() == 0) {
                 questions.get(i).setIsUsed(0);
             }
             questionRepository.save(questions.get(i));
@@ -109,7 +109,7 @@ public class ExamPaperService {
         examPaperRepository.save(examPaper);
     }
     public Long count() {
-        return examPaperRepository.count();
+        return examPaperRepository.countByIsDeleted();
     }
 
     // 修改用户is_used状态

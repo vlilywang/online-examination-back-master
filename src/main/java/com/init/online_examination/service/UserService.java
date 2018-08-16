@@ -175,7 +175,8 @@ public class UserService implements UserDetailsService {
 
     // runner
     public Long count() {
-        return userRepository.count();
+        return userRepository.countByIsDeleted();
+//        return userRepository.count();
     }
 
 }
