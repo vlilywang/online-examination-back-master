@@ -107,10 +107,14 @@ public class GradeService {
         for (int i = 0; i < body.size(); i++){
             Long questId = Long.valueOf(body.get(i).get("questId").toString());
             String[] answer = body.get(i).get("answer").toString().split(",");
-            Question question = questionRepository.findFirstByIdAndIsDeleted(questId, 0);
-            String[] rightAnswer = question.getAnswer();
-            Float perValue = question.getPerValue();
-            // 要求做题时必须都做出选择，不能空着
+            String[] exampaperQuestionAnswer = questions.get(i).getAnswer();
+            Long exampaperQuestion = questions.get(i).getId(); // 这样太依赖前端传的顺序
+//            Question question = questionRepository.findFirstByIdAndIsDeleted(questId, 0);
+//            String[] rightAnswer = question.getAnswer();
+            String[] rightAnswer = exampaperQuestionAnswer;
+//            Float perValue = question.getPerValue();
+            Float perValue = questions.get(i).getPerValue();
+            // 要求做题时必须都做出选择，不能空着    // 但是现在我发现空着也没什么关系
             if(answer.length != rightAnswer.length) {
                 currentGrade = currentGrade;
             } else {
@@ -143,6 +147,9 @@ public class GradeService {
         return grade;
     }
 
+    public List<Grade> findAllByUserAndExamPaper(User user, ExamPaper examPaper) {
+        return this.gradeRepository.findAllByUserAndExamPaper(user, examPaper);
+    }
     public Long count() {
         return gradeRepository.count();
     }

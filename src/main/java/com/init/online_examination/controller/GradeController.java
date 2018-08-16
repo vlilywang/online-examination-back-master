@@ -20,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/api/grade")
 // 提交试卷时没加答案个数的判断
+// 提交试卷时 前端传的试题的id
 public class GradeController {
     private GradeService gradeService;
     private UserService userService;
@@ -145,10 +146,15 @@ public class GradeController {
         if (user == null) {
             return ResultData.error("先登录");
         }
-        try {
-            return ResultData.success(gradeService.add(examPaper, user, body));
-        } catch (Exception e) {
-            return ResultData.error(e.getMessage());
+        List<Grade> grades = this.gradeService.findAllByUserAndExamPaper(user, examPaper);
+        if (grades.size() == 0) {
+            try {
+                return ResultData.success(gradeService.add(examPaper, user, body));
+            } catch (Exception e) {
+                return ResultData.error(e.getMessage());
+            }
+        } else {
+            return ResultData.error("你已经考过该试卷了");
         }
     }
 }
