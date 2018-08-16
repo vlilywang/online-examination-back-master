@@ -103,37 +103,33 @@ public class GradeService {
         grade.setUser(user);
         grade.setExamPaper(examPaper);
         Float currentGrade = 0F;
-        List<Question> questions = examPaper.getQuestions();
         for (int i = 0; i < body.size(); i++){
             Long questId = Long.valueOf(body.get(i).get("questId").toString());
             String[] answer = body.get(i).get("answer").toString().split(",");
-            String[] exampaperQuestionAnswer = questions.get(i).getAnswer();
-            Long exampaperQuestion = questions.get(i).getId(); // 这样太依赖前端传的顺序
-//            Question question = questionRepository.findFirstByIdAndIsDeleted(questId, 0);
-//            String[] rightAnswer = question.getAnswer();
-            String[] rightAnswer = exampaperQuestionAnswer;
-//            Float perValue = question.getPerValue();
-            Float perValue = questions.get(i).getPerValue();
-            // 要求做题时必须都做出选择，不能空着    // 但是现在我发现空着也没什么关系
-            if(answer.length != rightAnswer.length) {
-                currentGrade = currentGrade;
-            } else {
-                boolean flag = false;
-                for (int a = 0; a < answer.length; a++) {
-                    for (int j = 0; j < rightAnswer.length; j++) {
-                        if (answer[a].equals(rightAnswer[j])) {
-                            flag = true;
+            Question question = questionRepository.findFirstByIdAndIsDeleted(questId, 0);
+            if (question != null) {
+                String[] rightAnswer = question.getAnswer();
+                Float perValue = question.getPerValue();
+                if(answer.length != rightAnswer.length) {
+                    currentGrade = currentGrade;
+                } else {
+                    boolean flag = false;
+                    for (int a = 0; a < answer.length; a++) {
+                        for (int j = 0; j < rightAnswer.length; j++) {
+                            if (answer[a].equals(rightAnswer[j])) {
+                                flag = true;
+                                break;
+                            } else {
+                                flag = false;
+                            }
+                        }
+                        if(flag == false) {
                             break;
-                        } else {
-                            flag = false;
                         }
                     }
-                    if(flag == false) {
-                        break;
+                    if (flag == true) {
+                        currentGrade = currentGrade + perValue;
                     }
-                }
-                if (flag == true) {
-                    currentGrade = currentGrade + perValue;
                 }
             }
         }
