@@ -48,7 +48,7 @@ public class GradeController {
                                @RequestParam(defaultValue = "") Long userId,
                                @RequestParam(defaultValue = "") Long exampaperId,
                                @RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "20") Integer pageSize) {
+                               @RequestParam(defaultValue = "10") Integer pageSize) {
         User user = null;
         if (userId != null) {
             user = userService.get(userId);
@@ -98,7 +98,7 @@ public class GradeController {
                                          @RequestParam(defaultValue = "") Date endTime,
                                          @RequestParam(defaultValue = "") Long exampaperId,
                                          @RequestParam(defaultValue = "1") Integer page,
-                                         @RequestParam(defaultValue = "20") Integer pageSize) {
+                                         @RequestParam(defaultValue = "10") Integer pageSize) {
         ExamPaper examPaper = null;
         if (exampaperId != null) {
             examPaper = examPaperService.get(exampaperId);

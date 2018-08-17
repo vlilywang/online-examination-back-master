@@ -35,7 +35,7 @@ public class UserController {
                                @RequestParam(defaultValue = "") String keyword,
                                @RequestParam(defaultValue = "0") Long roleId,
                                @RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "20") Integer pageSize) {
+                               @RequestParam(defaultValue = "10") Integer pageSize) {
         Role role = null;
         if (roleId != 0) {
             role = userService.getRole(roleId);

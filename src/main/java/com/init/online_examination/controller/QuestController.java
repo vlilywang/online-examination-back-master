@@ -35,7 +35,7 @@ public class QuestController {
                                @RequestParam(defaultValue = "") String keyword,
                                @RequestParam(defaultValue = "0") Long typeId,
                                @RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "20") Integer pageSize) {
+                               @RequestParam(defaultValue = "10") Integer pageSize) {
         Type type = null;
         if (typeId != 0) {
             type = questionService.findById(typeId);

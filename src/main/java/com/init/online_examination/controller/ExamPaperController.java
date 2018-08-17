@@ -44,7 +44,7 @@ public class ExamPaperController {
                                @RequestParam(defaultValue = "") Date endTime,
                                @RequestParam(defaultValue = "") String keyword,
                                @RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "20") Integer pageSize) {
+                               @RequestParam(defaultValue = "10") Integer pageSize) {
 //        Long count = examPaperService.count();
         Page<ExamPaper> examPapers = examPaperService.find(beginTime, endTime, keyword, page, pageSize);
         return ResultData.success(new PageData(examPapers, page, pageSize));
