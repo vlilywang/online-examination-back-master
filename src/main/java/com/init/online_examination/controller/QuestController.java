@@ -32,7 +32,7 @@ public class QuestController {
     @RequestMapping(value = "", method = RequestMethod.GET)
         public ResponseEntity find(@RequestParam(defaultValue = "") Date beginTime,
                                    @RequestParam(defaultValue = "") Date endTime,
-                               @RequestParam(defaultValue = "") String[] keyword,
+                               @RequestParam(defaultValue = "") String keyword,
                                @RequestParam(defaultValue = "0") Long typeId,
                                @RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "20") Integer pageSize) {
@@ -43,10 +43,10 @@ public class QuestController {
                 return ResultData.error("指定的试题类型id不正确");
             }
         }
-        Long count = questionService.count();
+//        Long count = questionService.count();
         Page<Question> questions = questionService.find(beginTime, endTime, keyword, type, page, pageSize);
 //        return ResultData.success(questions);
-        return ResultData.success(new PageData(questions, page, pageSize, count));
+        return ResultData.success(new PageData(questions, page, pageSize));
     }
 
     // 获取试题列表 不分页

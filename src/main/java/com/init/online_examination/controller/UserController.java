@@ -32,7 +32,7 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity find(@RequestParam(defaultValue = "") Date beginTime,
                                @RequestParam(defaultValue = "") Date endTime,
-                               @RequestParam(defaultValue = "") String[] keyword,
+                               @RequestParam(defaultValue = "") String keyword,
                                @RequestParam(defaultValue = "0") Long roleId,
                                @RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "20") Integer pageSize) {
@@ -43,9 +43,8 @@ public class UserController {
                 return ResultData.error("指定的角色id不正确");
             }
         }
-        Long count = userService.count();
         Page<User> users = userService.find(beginTime, endTime, keyword, role, page, pageSize);
-        return ResultData.success(new PageData(users, page, pageSize, count));
+        return ResultData.success(new PageData(users, page, pageSize));
     }
     // 获取当前用户信息
     @RequestMapping(value = "/current", method = RequestMethod.GET)

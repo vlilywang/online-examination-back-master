@@ -42,13 +42,12 @@ public class ExamPaperController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity find(@RequestParam(defaultValue = "") Date beginTime,
                                @RequestParam(defaultValue = "") Date endTime,
-                               @RequestParam(defaultValue = "") String[] keyword,
+                               @RequestParam(defaultValue = "") String keyword,
                                @RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "20") Integer pageSize) {
-        Long count = examPaperService.count();
+//        Long count = examPaperService.count();
         Page<ExamPaper> examPapers = examPaperService.find(beginTime, endTime, keyword, page, pageSize);
-//        return ResultData.success(examPapers);
-        return ResultData.success(new PageData(examPapers, page, pageSize, count));
+        return ResultData.success(new PageData(examPapers, page, pageSize));
 
     }
 

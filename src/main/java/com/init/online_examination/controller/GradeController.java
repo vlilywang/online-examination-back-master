@@ -63,9 +63,10 @@ public class GradeController {
                 return ResultData.error("该试卷不存在");
             }
         }
-        Long count = gradeService.count();
+//        Long count = gradeService.count();
+//        System.out.println("count: " + count);
         Page<Grade> grades = gradeService.find(beginTime, endTime, user, examPaper, page, pageSize);
-        return ResultData.success(new PageData(grades, page, pageSize, count));
+        return ResultData.success(new PageData(grades, page, pageSize));
     }
 
 

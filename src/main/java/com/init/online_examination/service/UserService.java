@@ -49,16 +49,20 @@ public class UserService implements UserDetailsService {
         return userRepository.findFirstByUsernameAndIsDeleted(s, 0);
     }
     // 搜索
-    public Page<User> find(Date beginTime, Date endTime, String[] keyword, Role role, Integer page, Integer pageSize) {
+    public Page<User> find(Date beginTime, Date endTime, String keyword, Role role, Integer page, Integer pageSize) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Specification<User> specification = new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 predicateList.add(criteriaBuilder.equal(root.get("isDeleted").as(Integer.class), 0));
-                if (keyword != null && keyword.length != 0) {
-                    predicateList.add(criteriaBuilder.isNotNull(root.get("keyword")));
-                    predicateList.add(criteriaBuilder.like(root.get("keyword").as(String.class), "%" + keyword + "%"));
+                if (keyword != null && !keyword.isEmpty()) {
+                    String likeWord = "%" + keyword + "%";
+                    Predicate[] likePredicate = new Predicate[2];
+                    likePredicate[0] = criteriaBuilder.like(root.get("username").as(String.class), likeWord);
+                    likePredicate[1] = criteriaBuilder.like(root.get("name").as(String.class), likeWord);
+//                    likePredicate[2] = criteriaBuilder.like(root.get("role").as(String.class), likeWord);
+                    predicateList.add(criteriaBuilder.or(likePredicate));
                 }
                 if (role != null) {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("role")));

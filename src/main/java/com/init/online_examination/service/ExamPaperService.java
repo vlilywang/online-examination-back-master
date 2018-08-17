@@ -32,16 +32,19 @@ public class ExamPaperService {
     }
 
     // 分页查询
-    public Page<ExamPaper> find(Date beginTime, Date endTime, String[] keyword, Integer page, Integer pageSize) {
+    public Page<ExamPaper> find(Date beginTime, Date endTime, String keyword, Integer page, Integer pageSize) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Specification<ExamPaper> specification = new Specification<ExamPaper>() {
             @Override
             public Predicate toPredicate(Root<ExamPaper> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 predicateList.add(criteriaBuilder.equal(root.get("isDeleted").as(Integer.class), 0));
-                if (keyword != null && keyword.length != 0) {
-                    predicateList.add(criteriaBuilder.isNotNull(root.get("keyword")));
-                    predicateList.add(criteriaBuilder.like(root.get("keyword").as(String.class), "%" + keyword + "%"));
+                if (keyword != null && !keyword.isEmpty()) {
+                    String likeWord = "%" + keyword + "%";
+                    Predicate[] likePredicate = new Predicate[2];
+                    likePredicate[0] = criteriaBuilder.like(root.get("keyword").as(String.class), likeWord);
+                    likePredicate[1] = criteriaBuilder.like(root.get("title").as(String.class), likeWord);
+                    predicateList.add(criteriaBuilder.or(likePredicate));
                 }
                 if (beginTime != null || endTime != null) {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("createTime")));

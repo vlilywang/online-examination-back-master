@@ -39,17 +39,13 @@ public class QuestionService {
     }
 
     // 获取试题列表 分页
-    public Page<Question> find(Date beginTime, Date endTime, String[] keyword, Type type, Integer page, Integer pageSize) {
+    public Page<Question> find(Date beginTime, Date endTime, String keyword, Type type, Integer page, Integer pageSize) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Specification<Question> specification = new Specification<Question>() {
             @Override
             public Predicate toPredicate(Root<Question> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 predicateList.add(criteriaBuilder.equal(root.get("isDeleted").as(Integer.class), 0));
-                if (keyword != null && keyword.length != 0) {
-                    predicateList.add(criteriaBuilder.isNotNull(root.get("keyword")));
-                    predicateList.add(criteriaBuilder.like(root.get("keyword").as(String.class), "%" + keyword + "%"));
-                }
                 if (type != null) {
                     predicateList.add(criteriaBuilder.isNotNull(root.get("type")));
                     predicateList.add(criteriaBuilder.equal(root.get("type").as(Type.class), type));
@@ -62,6 +58,13 @@ public class QuestionService {
                 }
                 if (endTime != null) {
                     predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(Date.class), endTime));
+                }
+                if (keyword != null && !keyword.isEmpty()) {
+                    String likeWord = "%" + keyword + "%";
+                    Predicate[] likePredicate = new Predicate[2];
+                    likePredicate[0] = criteriaBuilder.like(root.get("title").as(String.class), likeWord);
+                    likePredicate[1] = criteriaBuilder.like(root.get("keyword").as(String.class), likeWord);
+                    predicateList.add(criteriaBuilder.or(likePredicate));
                 }
                 Predicate[] arrayType = new Predicate[predicateList.size()];
                 return criteriaBuilder.and(predicateList.toArray(arrayType));
