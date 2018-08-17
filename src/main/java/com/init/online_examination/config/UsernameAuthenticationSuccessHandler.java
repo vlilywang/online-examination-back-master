@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Configuration
 public class UsernameAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -15,5 +16,11 @@ public class UsernameAuthenticationSuccessHandler implements AuthenticationSucce
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         response.addHeader("Location", "/teacher.html");
         response.setStatus(302);
+//        PrintWriter out = response.getWriter();
+//        out.flush();
+//        String s = "登录成功";
+//        out.write(s, 0, s.length());
+//        out.flush();
+//        out.close();
     }
 }

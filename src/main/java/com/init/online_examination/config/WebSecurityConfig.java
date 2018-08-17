@@ -12,6 +12,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UsernameAuthenticationConfig usernameAuthenticationConfig;
     private AuthenticationEntryPointHandler authenticationEntryPointHandler;
     private AuthenticationAccessDeniedHandler authenticationAccessDeniedHandler;
+    private ExitSuccessHandler exitSuccessHandler;
+
+    @Autowired
+    public void setExitSuccessHandler(ExitSuccessHandler exitSuccessHandler) {
+        this.exitSuccessHandler = exitSuccessHandler;
+    }
 
     @Autowired
     public void setUsernameAuthenticationConfig(UsernameAuthenticationConfig usernameAuthenticationConfig) {
@@ -49,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(60 * 60 * 24 * 3)
                 .and()
                 .logout()
-                .logoutUrl("/auth/logout");
+                .logoutUrl("/api/logout")
+                .logoutSuccessHandler(exitSuccessHandler);
     }
 }
