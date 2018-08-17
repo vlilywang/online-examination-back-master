@@ -64,7 +64,6 @@ public class GradeController {
             }
         }
 //        Long count = gradeService.count();
-//        System.out.println("count: " + count);
         Page<Grade> grades = gradeService.find(beginTime, endTime, user, examPaper, page, pageSize);
         return ResultData.success(new PageData(grades, page, pageSize));
     }
@@ -85,19 +84,21 @@ public class GradeController {
             return ResultData.error("考试不存在");
         }
     }
+
     // 根据当前用户参加的所有考试的详情 不分页
     @RequestMapping(value = "/current/all/noPage", method = RequestMethod.GET)
     public List<Grade> getCurrentUserAllGrade() {
         User user = userService.current();
         return gradeService.findCurrentAll(user);
     }
+
     // 当前用户参加的所有考试的详情 分页
     @RequestMapping(value = "/current/all", method = RequestMethod.GET)
     public ResponseEntity findCurrentAll(@RequestParam(defaultValue = "") Date beginTime,
-                               @RequestParam(defaultValue = "") Date endTime,
-                               @RequestParam(defaultValue = "") Long exampaperId,
-                               @RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "20") Integer pageSize) {
+                                         @RequestParam(defaultValue = "") Date endTime,
+                                         @RequestParam(defaultValue = "") Long exampaperId,
+                                         @RequestParam(defaultValue = "1") Integer page,
+                                         @RequestParam(defaultValue = "20") Integer pageSize) {
         ExamPaper examPaper = null;
         if (exampaperId != null) {
             examPaper = examPaperService.get(exampaperId);
@@ -109,16 +110,18 @@ public class GradeController {
         if (user == null) {
             return ResultData.error("请先登录");
         }
-        Long count = gradeService.countByUser(user);
+//        Long count = gradeService.countByUser(user);
         Page<Grade> grades = gradeService.find(beginTime, endTime, user, examPaper, page, pageSize);
-        return ResultData.success(new PageData(grades, page, pageSize, count));
+        return ResultData.success(new PageData(grades, page, pageSize));
     }
+
     // 根据试卷查看 不分页
     @RequestMapping(value = "/paper/{id}/noPage", method = RequestMethod.GET)
     public List<Grade> getAllByPaperId(@PathVariable Long id) {
         ExamPaper examPaper = examPaperService.get(id);
         return gradeService.findPaperAll(examPaper);
     }
+
     // 根据试卷id查看所有成绩 分页
 //    @RequestMapping(value = "/paper/{id}", method = RequestMethod.GET)
 //    public ResponseEntity findByExampaper(@PathVariable Long id,

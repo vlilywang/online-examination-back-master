@@ -84,7 +84,6 @@ public class QuestController {
         }
         Long typeId = Long.valueOf(body.get("typeId").toString());
         if (body.containsKey("option") && !body.get("option").toString().isEmpty()) {
-            System.out.println(body.get("option"));
             String getOption = "";
             getOption = body.get("option").toString();
             option = getOption.split(",");
@@ -103,7 +102,6 @@ public class QuestController {
         if (body.containsKey("answer") && !body.get("answer").toString().isEmpty()) {
             String getAnswer = "";
             getAnswer = body.get("answer").toString();
-            System.out.println(getAnswer);
             answer = getAnswer.split(",");
             if (typeId == 1L || typeId == 3L){
                 if (answer.length != 1) {
