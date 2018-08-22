@@ -12,12 +12,21 @@ function _save(){
             data:data,
             contentType : "application/json",
             success : function(data) {
-                alert("增加成功")
-                window.location.href="updateUser.html"
+                new $.zui.Messager('用户增加成功！', {
+                    type: 'success',
+                    placement: 'center',
+                    time: 2000
+                }).show();
+                setTimeout(function () {
+                    window.location.href="updateUser.html"
+                }, 2000);
             },
             error:function (data) {
-                alert("增加失败，用户名已存在")
-                console.log(JSON.stringify(data.responseText))
+                new $.zui.Messager("用户增加失败！" + data.responseText, {
+                    type: 'danger',
+                    placement: 'center',
+                    time: 2000
+                }).show();
             }
         });
     }

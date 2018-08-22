@@ -3,181 +3,169 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>questions</title>
+    <title>updateUser</title>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/template-web.js"></script>
     <script src="js/zui.min.js"></script>
     <script src="lib/chart/zui.chart.min.js"></script>
     <script src="js/checkbox.js"></script>
-    <script src="js/deleteQuestion.js"></script>
     <script src="js/getUsername.js"></script>
     <link rel="stylesheet" href="css/zui.min.css">
-    <link rel="stylesheet" href="css/questions.css">
+    <link rel="stylesheet" href="css/updateUser.css">
 </head>
 <script type="text/javascript">
-    function _edit(obj) {
+    function _delete(obj){
+        var boo = window.confirm("确定要删除？")
+        if(boo){
+            while(obj.nodeName!="TR"){
+                obj=obj.parentNode;
+            }
+            var idx = obj.rowIndex;
+            var id = obj.getElementsByTagName("td")[1].innerHTML;
+            $.ajax({
+                type : "DELETE",
+                url:"/api/user/delete/id/"+id,
+                success : function(data) {
+                    document.getElementById("tb").deleteRow(idx);
+                    new $.zui.Messager('用户删除成功！', {
+                        icon: 'check',
+                        placement: 'center',
+                        type: 'success',
+                        time:2000
+                    }).show();
+                    setTimeout(function () {
+                        window.location.href = "deleteUsers.html"
+                    }, 2000);
+                },
+                error:function (data) {
+                    new $.zui.Messager('用户删除失败！' + data.responseText, {
+                        icon: 'warning-sign',
+                        type: 'danger',
+                        placement: 'center',
+                        time:2000
+                    }).show();
+                }
+            });
+        }
+    }
+
+    function _editUser(obj) {
         while (obj.nodeName != "TR") {
             obj = obj.parentNode;
         }
         var idx = obj.rowIndex;
         var id = obj.getElementsByTagName("td")[1].innerHTML;
-        $.get("/api/question/" + id, function (data) {
-            if (data.type.id == 3) {
-                //判断
-                $(".id1").append("试题ID：<strong id='id1'>" + data.id + "</strong>");
-                $("#body1").append("<form id='upd1' class='form-horizontal'>" +
+        $.ajax({
+            type: "GET",
+            url: "/api/user/" + id,
+            success: function (data) {
+                $(".id1").append("用户ID：<strong id='id1'>" + id + "</strong>");
+                $("#body1").html("<form id='upd1' class='form-horizontal'>" +
                     "<br>" +
-                    "<label class='col-sm-2'>题目:</label>" +
-                    "<textarea rows='5' style='width: 400px;' class='form-control' id='title1'></textarea>" +
+                    "<div class='form-group'>" +
+                    "<label class='col-sm-2 required' style='width:100px;'>真实姓名</label>" +
+                    "<input type='text' class='form-control' id='name1' style='width:300px;' placeholder='真实姓名'>" +
+                    "</div>" +
                     "<br>" +
-                    "<label class='col-sm-2'>关键词:</label>" +
-                    "<textarea rows='1' style='width: 400px;' class='form-control' id='keyword1'></textarea>" +
+                    "<div class='form-group'>" +
+                    "<label class='col-sm-2 required' style='width:100px;'>用户角色</label>" +
+                    "<select class='form-control' id='role' style='width:300px'>" +
+                    "<option value='2' id='2'>学生</option>" +
+                    "<option value='1' id='1'>教师</option>" +
+                    "</select>" +
+                    "</div>" +
                     "<br>" +
-                    "<label class='col-sm-2' style='width:100px;'>答案:</label>" +
                     "<br>" +
+                    "<div style='text-align:right;width:550px'>" +
+                    "<button type='button' class='btn' onclick='_updUser()'>确认修改</button>" +
+                    "</div>" +
+                    "</form>");
+                $("#name1").val(data.name)
+                if(data.role.id == 1) {
+                    $("#1").attr("selected",true);
+                } else {
+                    $("#2").attr("selected",true);
+                }
+            }
+        });
+    }
+
+    function _editPass(obj) {
+        while (obj.nodeName != "TR") {
+            obj = obj.parentNode;
+        }
+        var idx = obj.rowIndex;
+        var id = obj.getElementsByTagName("td")[1].innerHTML;
+        $.ajax({
+            type: "GET",
+            url: "/api/user/" + id,
+            success: function (data) {
+                $(".id2").append("用户ID：<strong id='id2'>" + data.id + "</strong>");
+                $("#body2").append("<form id='upd2' class='form-horizontal'>" +
                     "<br>" +
-                    "<div style='position:relative;left: 100px;' id='answer1'>" +
-                    "正确：<input type='radio' value='A' name='2' id='A'>" +
-                    "<br>" +
-                    "错误：<input type='radio' value='B' name='2' id='B'>" +
+                    "<div class='form-group'>" +
+                    "<label class='col-sm-2 required' style='width:100px;'>新密码</label>" +
+                    "<input type='text' class='form-control' id='newPass' style='width:400px;' placeholder='新密码'>" +
                     "</div>" +
                     "<br>" +
                     "<div style='text-align:right;width:550px'>" +
-                    "<button type='button' class='btn' onclick='_updQuestion1()'>确认修改</button>" +
+                    "<button type='button' class='btn'' onclick='_updUserPass()'>确认修改</button>" +
                     "</div>" +
-                    "</form>"
-                );
-                $("#title1").val(data.title)
-                $("#keyword1").val(data.keyword);
-                if (data.answer == 'A') {
-                    $("#A").attr("checked", true);
-                } else {
-                    $("#B").attr("checked", true);
-                }
-            }
-            else {
-                //选择
-                $(".id1").append("试题ID：<strong id='id1'>" + data.id + "</strong>");
-                $("#body1").append("<form id='upd' class='form-horizontal'>" +
-                    "<br>" +
-                    "<label class='col-sm-2'>题目:</label>" +
-                    "<textarea rows='4' style='width: 400px;' class='form-control' id='title1'></textarea>" +
-                    "<br>" +
-                    "<br>" +
-                    "<label class='col-sm-2'>关键词:</label>" +
-                    "<textarea rows='1' style='width: 400px;' class='form-control' id='keyword1'></textarea>" +
-                    "<br>" +
-                    "<br>" +
-                    "<label class='col-sm-2' style='width:100px;' id='opton'>选项:</label>" +
-                    "<br>" +
-                    "<br>" +
-                    "<label class='col-sm-2' style='width:100px;'>A:</label>" +
-                    "<textarea class='form-control' id='option1' style='width: 400px;'></textarea>" +
-                    "<br>" +
-                    "<label class='col-sm-2' style='width:100px;'>B:</label>" +
-                    "<textarea class='form-control' id='option2' style='width:400px;'></textarea>" +
-                    "<br>" +
-                    "<label class='col-sm-2' style='width:100px;'>C:</label>" +
-                    "<textarea class='form-control' id='option3' style='width:400px;'></textarea>" +
-                    "<br>" +
-                    "<label class='col-sm-2' style='width:100px;'>D:</label>" +
-                    "<textarea class='form-control' id='option4' style='width:400px;'></textarea>" +
-                    "<br>" +
-                    "<label class='col-sm-2' style='width:100px;'>答案:</label>" +
-                    "<textarea class='form-control' id='answer1' style='width:400px;'></textarea>" +
-                    "<br>" +
-                    "<div style='text-align:right;width:500px'>" +
-                    "<button type='button' class='btn' onclick='_updQuestion()'>确认修改</button>" +
-                    "</div>" +
-                    "</form>"
-                );
-                $("#title1").val(data.title);
-                $("#answer1").val(data.answer);
-                $("#keyword1").val(data.keyword);
-                for (var i = 0; i < data.options.length; i++) {
-                    var options = data.options[i].options;
-                    $("#option" + [i + 1]).val(options)
-                }
+                    "</form>")
             }
         })
     }
 
-    function _updQuestion() {
-        //修改选择
+    function _updUser() {
         var id = $("#id1").text();
-        var title = $("#title1").val();
-        var keyword = $("#keyword1").val();
-        var answer = $("#answer1").val();
-        var options = ""
-        for (var i = 1; i < 5; i++) {
-            var option = $("#option" + [i]).val();
-            options += option + ","
-        }
-        options = options.substring(0, options.length - 1)
+        var name = $("#name1").val();
+        var roleId = $("#role").val();
         $.ajax({
             type: "PUT",
-            url: "/api/question/" + id,
-            data: JSON.stringify({title: title, keyword: keyword, option: options, answer: answer}),
+            url: "/api/user/" + id,
+            data: JSON.stringify({name: name, roleId: roleId}),
             contentType: "application/json",
             success: function (data) {
-                new $.zui.Messager('试题信息修改成功！', {
+                new $.zui.Messager('用户信息修改成功！', {
                     icon: 'check',
                     placement: 'center',
                     type: 'success',
-                    time: 2000
+                    time:2000
                 }).show();
                 setTimeout(function () {
                     window.location.reload();
-                }, 2000)
+                }, 2000);
             },
             error: function (data) {
-                new $.zui.Messager('操作失败！', {
-                    icon: 'check',
-                    placement: 'center',
-                    type: 'danger',
-                    time: 2000
-                }).show();
-                setTimeout(function () {
-                    window.location.reload();
-                }, 2000)
                 console.log(JSON.stringify(data))
             }
         });
     }
 
-    function _updQuestion1() {
-        //修改判断
-        var id = $("#id1").text();
-        var title = $("#title1").val();
-        var keyword = $("#keyword1").val();
-        var answer = $("input:radio[name=2]:checked").val();
-        var option = "A,B";
+    function _updUserPass() {
+        var id = $("#id2").text();
+        var newPass = $("#newPass").val();
         $.ajax({
             type: "PUT",
-            url: "/api/question/" + id,
-            data: JSON.stringify({title: title, keyword: keyword, option: option, answer: answer}),
+            url: "/api/user/" + id + "/password",
+            data: JSON.stringify({newPassword: newPass}),
             contentType: "application/json",
             success: function (data) {
-                new $.zui.Messager('试题信息修改成功！', {
+                new $.zui.Messager('用户密码修改成功！', {
                     icon: 'check',
-                    type: 'success',
                     placement: 'center',
-                    time: 2000
+                    type: 'success',
+                    time:2000
                 }).show();
                 setTimeout(function () {
                     window.location.reload();
-                }, 2000)
+                }, 2000);
             },
             error: function (data) {
-                new $.zui.Messager('操作失败！', {
-                    icon: 'check',
-                    placement: 'center',
-                    type: 'danger',
-                    time: 2000
+                new $.zui.Messager('用户密码修改失败！'+data.responseText, {
+                    icon: 'warning-sign',
+                    placement: 'center'
                 }).show();
-                setTimeout(function () {
-                    window.location.reload();
-                }, 2000)
                 console.log(JSON.stringify(data))
             }
         });
@@ -199,11 +187,11 @@
         var page = getParam("page=");
         $.ajax({
             type: "GET",
-            url: "/api/question?page=" + page,
+            url: "/api/user?page=" + page,
             data: $("#form").serialize(),
             success: function (data) {
-                var html = template("question", {data: data});
-                $("#body").html(html);
+                var html = template("user", {data: data});
+                $("#tbody").html(html);
                 var pager = template("myPager", {data: data});
                 $("#pager").html(pager);
                 $("#li" + page).addClass("active");
@@ -215,22 +203,19 @@
         $("#pageinput").val(page);
         $.ajax({
             type: "GET",
-            url: "/api/question/",
+            url: "/api/user/",
             data: $("#select").serialize(),
             success: function (data) {
                 if (data.data.length == 0) {
-                    new $.zui.Messager('没有符合条件的试题！', {
+                    new $.zui.Messager('没有符合条件的用户！', {
                         icon: 'warning-sign',
                         placement: 'center',
                         time:2000
                     }).show();
                     $(".pager").html("");
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 2000);
                 } else {
-                    var html = template("question", {data: data});
-                    $("#body").html(html);
+                    var html = template("user", {data: data});
+                    $("#tbody").html(html);
                     var pager = template("myPager", {data: data});
                     $("#pager").html(pager);
                     $("li").removeClass("active");
@@ -244,12 +229,51 @@
                     placement: 'center',
                     time:2000
                 }).show();
-                setTimeout(function () {
-                    window.location.reload();
-                }, 2000);
                 console.log(JSON.stringify(data))
             }
         });
+    }
+
+    function _deletes() {
+        obj = document.getElementsByName("single");
+        ids = [];
+        for(i in obj){
+            if(obj[i].checked)
+                ids.push(obj[i].value);
+        }
+        if (ids == "") {
+            new $.zui.Messager('未选择任何用户！', {
+                icon: 'warning-sign',
+                placement: 'center',
+                type: 'danger',
+                time:2000
+            }).show();
+        } else {
+            $.ajax({
+                type : "DELETE",
+                url:"/api/user/delete/ids/"+ids,
+                success : function(data) {
+                    new $.zui.Messager('用户删除成功！', {
+                        icon: 'check',
+                        placement: 'center',
+                        type: 'success',
+                        time:2000
+                    }).show();
+                    setTimeout(function () {
+                        window.location.href = "deleteUsers.html"
+                    }, 2000);
+                },
+                error:function (data) {
+                    new $.zui.Messager('用户删除失败' + data.responseText, {
+                        icon: 'warning-sign',
+                        placement: 'center',
+                        type: 'danger',
+                        time:2000
+                    }).show();
+                    console.log(JSON.stringify(data))
+                }
+            });
+        }
     }
 
     function _reset() {
@@ -257,22 +281,24 @@
     }
 
 </script>
-<script id="question" type="text/html">
-    <% for(i=0;i
-    <data.data.length;i++){ %>
+
+<script id="user" type="text/html">
+    <% for(i=0;i<data.data.length;i++){ %>
     <tr style="height: 50px;border-bottom: 1px solid white;font-size: 18px;font-weight: normal">
         <td>
-            <input type='checkbox' value='1' name='single'>
+            <input type='checkbox' value='<%=data.data[i].id%>' name='single'>
         </td>
         <td><%=data.data[i].id%></td>
         <td><%=data.data[i].createTime%></td>
-        <td><%=data.data[i].type.typeName%></td>
-        <td><%=data.data[i].title%></td>
-        <td><%=data.data[i].keyword%></td>
+        <td><%=data.data[i].username%></td>
+        <td><%=data.data[i].name%></td>
+        <td><%=data.data[i].role.name%></td>
         <td>
-            <i onclick="_edit(this)" class='icon icon-edit icon-2x' style="cursor: pointer;" data-custom="<div class='id1'></div><div id='body1'></div>" data-toggle="modal" title="编辑试题"></i>
+            <i class='icon icon-edit icon-2x' onclick="_editUser(this)" style="cursor: pointer;" data-custom="<div class='id1'></div><div id='body1'></div>" data-toggle="modal" title="编辑用户"></i>
             &nbsp;
-            <i class='icon icon-cut icon-2x' id='delete' style="cursor: pointer;" onclick='_delete(this)' title='删除试题'></i>
+            <i class='icon icon-cut icon-2x' onclick='_delete(this)' style="cursor: pointer;" title='删除用户'></i>
+            &nbsp;
+            <i class='icon icon-key icon-2x' onclick="_editPass(this)" style="cursor: pointer;" data-custom="<div class='id2'></div><div id='body2'></div>" data-toggle="modal" title="修改密码"></i>
         </td>
     </tr>
     <% } %>
@@ -332,6 +358,7 @@
     {{/if}}
     {{/if}}
 </script>
+
 <body>
 <nav class="navbar" id="nav" role="navigation">
     <div class="container-fluid">
@@ -377,33 +404,32 @@
     <nav class="menu" data-ride="menu" style="width: 210px;height:153px;line-height: 30px">
         <ul class="tree tree-menu" style="width: 150px;">
             <li>
-                <a href="questions.html">
+                <a href="updateUser.html">
                     <i class="icon icon-th"></i>首页
                 </a>
             </li>
             <li>
-                <a href="addQuestion.html">
-                    <i class="icon icon-user"></i>新增试题
+                <a href="addUser.html">
+                    <i class="icon icon-user"></i>新增用户
                 </a>
             </li>
             <li>
-                <a href="deleteQuestions.html">
+                <a href="deleteUsers.html">
                     <i class="icon icon-trash"></i>批量删除
                 </a>
             </li>
         </ul>
     </nav>
     <form id="select">
-        <div class="row" style="position:relative;left: 40px;">
+        <div class="row" style="position:relative;left: 50px;">
             <div class="col-sm-1" class="input-group">
-                <select name="typeId" class="form-control" style="width:100px;float: left;font-size: 15px">
+                <select name="roleId" class="form-control" style="width:80px;float: left;font-size: 15px">
                     <option value="">全部</option>
-                    <option value="1">单选题</option>
-                    <option value="2">多选题</option>
-                    <option value="3">判断题</option>
+                    <option value="2">学生</option>
+                    <option value="1">教师</option>
                 </select>
             </div>
-            <div class="input-group" style="float: left;left: 55px;width: 180px;">
+            <div class="input-group" style="float: left;left: 40px;width: 180px;">
                 <div class="input-control search-box has-icon-left has-icon-right search-example">
                     <input id="searchInputExample" autofocus="autofocus" name="keyword" type="search"
                            class="form-control search-input" placeholder="请输入关键字" style="font-size: 15px">
@@ -412,12 +438,12 @@
                     </label>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <span style="float: left;margin-left: 70px;font-size: 18px;color: white;">从&nbsp;&nbsp;</span>
+            <div class="col-sm-4" style="position: relative;left: 70px">
+                <span style="float: left;;font-size: 18px;color: white;">从&nbsp;&nbsp;</span>
                 <input name="beginTime" type="date" style="width: 200px;font-size: 15px" class="form-control">
             </div>
             <div class="col-sm-4" style="position: relative;right: 45px">
-                <span style="float: left;font-size: 18px;color: white;" >至&nbsp;&nbsp;</span>
+                <span style="float: left;font-size: 18px;color: white;">至&nbsp;&nbsp;</span>
                 <input name="endTime" type="date" style="width: 200px;float: left;font-size: 15px" class="form-control">
                 <button onclick="_select(1)" class="btn" style="position: relative;float: left;left: 30px;font-size: 14px" type="button">查询
                 </button>
@@ -426,30 +452,28 @@
             </div>
         </div>
         <br><br>
-        <table id="tb" style="float: left;color: white;font-weight: bold;width: 1100px;">
+        <table id="tb" style="float: left;color: white;font-weight: bold">
             <thead style="font-size: 20px;border-top: 2px solid white;border-bottom: 2px solid white;">
             <tr style="height: 50px;">
-                <th style="width:60px;">
-                    <input type="checkbox" value="1" name="all">
+                <th style='width:60px;'>
+                    <input type='checkbox' value='1' name='all'>
                 </th>
-                <th style="width:100px;">试题id</th>
-                <th style="width:200px;">创建时间</th>
-                <th style="width:150px;">试题类型</th>
-                <th style="width:250px;">内容</th>
-                <th style="width:120px;">关键词</th>
-                <th style="width:150px;">操作</th>
+                <th style='width:100px;'>用户id</th>
+                <th style='width:200px;'>创建时间</th>
+                <th style='width:180px;'>用户名</th>
+                <th style='width:180px;'>真实姓名</th>
+                <th style='width:150px;'>用户类型</th>
+                <th style='width:180px;'>操作</th>
             </tr>
             </thead>
-            <tbody id="body">
+            <tbody id="tbody">
             </tbody>
+            <span class="btn" onclick="_deletes()" style="text-align:right;clear: both;position:relative;margin: 580px 20px 20px -80px;">全部删除</span>
         </table>
-        <input hidden id="pageinput" name="page" value="1">
+        <input id="pageinput" name="page" value="1" hidden>
     </form>
 </div>
-<br><br>
-<ul id="pager">
-
-</ul>
+<ul id="pager"></ul>
 <br><br>
 </body>
 

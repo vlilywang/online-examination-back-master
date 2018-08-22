@@ -17,26 +17,42 @@
         width: 1000px;
         position: relative;
     }
-
     .menu {
         display: flex;
     }
-
     #main {
         display: flex;
     }
-
+    #main a {
+        color:white;
+        font-size: 18px;
+    }
+    body {
+        background: url('/img/bg13.jpg');
+    }
+    #nav ul li{
+        color: white;
+    }
+    #nav ul li a{
+        color: white;
+    }
     .navbar {
         height: 100px;
-        font-size: 20px;
+        font-size: 24px;
+    }
+    #f1 thead{
+        font-size: 16px;
     }
 </style>
 
+<script type="text/javascript">
+
+</script>
 <body>
-<nav class="navbar" role="navigation">
+<nav class="navbar" id="nav" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+            <a class="navbar-brand" style="font-size:32px;color: white;" href="teacher.html">首页</a>
         </div>
         <div class="collapse navbar-collapse navbar-collapse-example">
             <ul class="nav navbar-nav">
@@ -47,7 +63,7 @@
                     <a href="questions.html">试题管理</a>
                 </li>
                 <li>
-                    <a href="paper.html">试卷管理</a>
+                    <a href="papers.html">试卷管理</a>
                 </li>
                 <li>
                     <a href="scores.html">学生成绩查询</a>
@@ -56,18 +72,16 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>教师</li>
                 <li>
-                    <a data-toggle="dropdown" style="font-size:16px" id="username">
+                    <a data-toggle="dropdown" style="font-size:20px">
+                        <span id="currentName"></span>
                         <b class="caret"></b>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="font-size: 20px;">
                         <li>
-                            <a href="#">个人信息</a>
+                            <a href="updPassword.html" style="color: black;">修改密码</a>
                         </li>
                         <li>
-                            <a href="updPassword.html">修改密码</a>
-                        </li>
-                        <li>
-                            <a href="/auth/logout">退出</a>
+                            <a href="/api/logout" style="color: black;">退出</a>
                         </li>
                     </ul>
                 </li>
@@ -76,8 +90,8 @@
     </div>
 </nav>
 <div id="main">
-    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
-        <ul class="tree tree-menu">
+    <nav class="menu" data-ride="menu" style="width: 210px;height:153px;line-height: 30px">
+        <ul class="tree tree-menu" style="width: 150px;">
             <li>
                 <a href="questions.html">
                     <i class="icon icon-th"></i>首页
@@ -89,28 +103,24 @@
                 </a>
             </li>
             <li>
-                <a href="selectQuestions.html">
-                    <i class="icon icon-time"></i>查询试题
-                </a>
-            </li>
-            <li>
-                <a href="">
+                <a href="deleteQuestions.html">
                     <i class="icon icon-trash"></i>批量删除
                 </a>
             </li>
         </ul>
     </nav>
-    <form id="f1">
-        <table class="table table-borderless" id="tb">
+    <form id="f1"  style="position: relative;left: 50px;">
+        <table class="table table-borderless" id="tb"  style="width: 900px;">
             <thead>
             <tr>
-                <th colspan="4">请选择题目类型</th>
+                <td style="font-size: 22px;color: white;">请选择题目类型</td>
             </tr>
             </thead>
             <tbody>
+            <hr>
             <tr>
-                <td colspan="4">
-                    <select class="form-control" id="type">
+                <td>
+                    <select class="form-control" id="addType" style="width: 800px;">
                         <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
                         <option value="1">单选题</option>
                         <option value="2">多选题</option>
@@ -119,58 +129,11 @@
                 </td>
             </tr>
             </tbody>
-            <thead>
-            <tr>
-                <th colspan="4">请输入题目</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td colspan="4">
-                    <textarea class="form-control" rows="5" placeholder="请输入题目" id="title"></textarea>
-                </td>
-            </tr>
-            </tbody>
-            <thead>
-            <tr>
-                <th colspan="4">请输入选项 </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td colspan="4">
-                    <textarea class="form-control" rows="5" placeholder="请输入选项" id="option"></textarea>
-                </td>
-            </tr>
-            </tbody>
-            <thead>
-            <tr>
-                <th colspan="4">请输入关键字</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td colspan="4">
-                    <textarea class="form-control" rows="5" placeholder="请输入关键字" id="keyword"></textarea>
-                </td>
-            </tr>
-            </tbody>
-            <thead>
-            <tr>
-                <th colspan="4">
-                    <input type="button" class="btn" onclick="_showAnswer()" value="答案">
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr id="tr">
-            </tr>
-            <tr>
-                <td style="text-align:right" colspan="4">
-                    <input type="button" class="btn btn-primary" onclick="_save()" value="保存">
-                </td>
-            </tr>
-            </tbody>
+        </table>
+        <table id="add" class="table table-borderless" style="width: 900px;">
+        <table id="addAnswer">
+
+        </table>
         </table>
     </form>
 </div>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>paper</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/template-web.js"></script>
+    <script src="js/zui.min.js"></script>
+    <script src="lib/chart/zui.chart.min.js"></script>
+    <script src="js/getUsername.js"></script>
+    <script src="js/checkbox.js"></script>
+    <script src="js/deletePaper.js"></script>
+    <link rel="stylesheet" href="css/zui.min.css">
+    <link rel="stylesheet" href="css/paper.css">
+</head>
+<script type="text/javascript">
+
+    var getParam = function (pattern) {
+        var page = 1;
+        var params = location.href.split("&");
+        for (var i = 0; i < params.length; i++) {
+            var index = params[i].lastIndexOf(pattern);
+            if (index != -1) {
+                page = params[i].substring(index + pattern.length);
+            }
+        }
+        return page;
+    }
+
+    $(function () {
+        var page = getParam("page=");
+        $.ajax({
+            type: "GET",
+            url: "/api/exampaper?page=" + page,
+            data: $("#form").serialize(),
+            success: function (data) {
+                var html = template("exampaper", {data: data});
+                $("#body").html(html);
+                var pager = template("myPager", {data: data});
+                $("#pager").html(pager);
+                $("#li" + page).addClass("active");
+            }
+        });
+    });
+
+    var _select = function (page) {
+        $("#pageinput").val(page);
+        $.ajax({
+            type: "GET",
+            url: "/api/exampaper/",
+            data: $("#select").serialize(),
+            success: function (data) {
+                if (data.data.length == 0) {
+                    new $.zui.Messager('没有符合条件的试卷！', {
+                        icon: 'warning-sign',
+                        placement: 'center',
+                        time: 5000
+                    }).show();
+                    $(".pager").html("");
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    var html = template("exampaper", {data: data});
+                    $("#body").html(html);
+                    var pager = template("myPager", {data: data});
+                    $("#pager").html(pager);
+                    $("li").removeClass("active");
+                    var p = $("#pageinput").val();
+                    $("#li" + p).addClass("active");
+                }
+            },
+            error: function (data) {
+                new $.zui.Messager('操作失败！', {
+                    icon: 'warning-sign',
+                    placement: 'center',
+                    time: 2000
+                }).show();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+                console.log(JSON.stringify(data))
+            }
+        });
+    }
+
+    function _deletes() {
+        obj = document.getElementsByName("single");
+        ids = [];
+        for(i in obj){
+            if(obj[i].checked)
+                ids.push(obj[i].value);
+        }
+        if (ids == "") {
+            new $.zui.Messager('未选择任何试卷！', {
+                icon: 'warning-sign',
+                placement: 'center',
+                type: 'danger',
+                time:2000
+            }).show();
+        } else {
+            $.ajax({
+                type : "DELETE",
+                url:"/api/exampaper/delete/ids/"+ids,
+                success : function(data) {
+                    new $.zui.Messager('试卷删除成功！', {
+                        icon: 'check',
+                        placement: 'center',
+                        type: 'success',
+                        time:2000
+                    }).show();
+                    setTimeout(function () {
+                        window.location.href = "deletePapers.html"
+                    }, 2000);
+                },
+                error:function (data) {
+                    new $.zui.Messager('试卷删除失败' + data.responseText, {
+                        icon: 'warning-sign',
+                        placement: 'center',
+                        type: 'danger',
+                        time:2000
+                    }).show();
+                    console.log(JSON.stringify(data))
+                }
+            });
+        }
+    }
+
+    function _reset() {
+        window.location.reload();
+    }
+
+    function _showPaper(obj) {
+        while (obj.nodeName != "TR") {
+            obj = obj.parentNode;
+        }
+        var idx = obj.rowIndex;
+        var id = obj.getElementsByTagName("td")[1].innerHTML;
+        $.ajax({
+            type: "GET",
+            url: "/api/exampaper/" + id,
+            async: false,
+            success: function (data) {
+                var html = template("paperQuestion", {data: data});
+                $("#testPaper").html(html);
+                $("#title").append(data.title);
+            }
+        });
+        $("body").css("background","white");
+        document.getElementById("conver").style.display = "block";
+        document.getElementById("show").style.display = "block";
+        document.getElementById("main").style.display = "none";
+        document.getElementById("select").style.display = "none";
+        document.getElementById("nav").style.display = "none";
+        document.getElementById("pager").style.display = "none";
+        $("#id").append(id);
+    }
+
+    function _close() {
+        window.location.href = "papers.html";
+    }
+</script>
+<script id="exampaper" type="text/html">
+    <% for(i=0;i
+    <data.data.length;i++){ %>
+    <tr style="height: 50px;border-bottom: 1px solid white;font-size: 18px;font-weight: normal">
+        <td>
+            <input type='checkbox' value='1' name='single'>
+        </td>
+        <td><%=data.data[i].id%></td>
+        <td><%=data.data[i].createTime%></td>
+        <td><%=data.data[i].title%></td>
+        <td><%=data.data[i].singleAmount%></td>
+        <td><%=data.data[i].multiAmount%></td>
+        <td><%=data.data[i].judgeAmount%></td>
+        <td>
+            <i class='icon icon-2x icon-download-alt' onclick="_showPaper(this)" style='cursor:pointer' title='预览试卷'></i>
+            &nbsp;
+            <i class='icon icon-2x icon-cut' id='delete' onclick='_delete(this)' style='cursor:pointer' title='删除试卷'></i>
+        </td>
+    </tr>
+    <% } %>
+</script>
+
+<script id="myPager" type="text/html">
+    {{if data.pageCount>1 }}
+    {{if data.page!=1}}
+    <li class="previous">
+        <a onclick="_select({{data.page-1}})" href="javascript:void(0)">«</a>
+    </li>
+    {{/if}}
+    {{if data.page>5}}
+    {{if data.page+5
+    <data.pageCount}}
+    <%for(i=data.page-4;i<=data.page+5;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{else}}
+    <%for(i=data.pageCount-9;i<=data.pageCount;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{/if}}
+    {{else}}
+    {{if data.pageCount>=10}}
+    <%for(i=1;i<=10;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{else}}
+    <%for(i=1;i<=data.pageCount;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{/if}}
+    {{/if}}
+    {{if data.page!=data.pageCount}}
+    <li class="next">
+        <a onclick="_select({{data.page+1}})" href="javascript:void(0)">»</a>
+    </li>
+    <li>
+        <div class="pager-label">第 <strong>{{data.page}}</strong>/<strong>{{data.pageCount}}</strong> 页
+        </div>
+    </li>
+    {{/if}}
+    {{if data.page==data.pageCount}}
+    <li>
+        <div class="pager-label">第 <strong>{{data.pageCount}}</strong>/<strong>{{data.pageCount}}</strong> 页
+        </div>
+    </li>
+    {{/if}}
+    {{/if}}
+</script>
+
+<script id="paperQuestion" type="text/html">
+    <% for(i=0;i<data.questions.length;i++){ %>
+    <div class="content panel-body row">
+        <div class="col-md-10">
+            {{if data.questions[i].type.id==2}}
+            <span>多选题</span><br>
+            <label>&nbsp;{{i+1}}. <%=data.questions[i].title%></label>
+            <label>选项</label>
+            <div class="checkbox">
+                <label>A.
+                    <%=data.questions[i].options[0].options%>
+                </label>
+                <label>B.
+                    <%=data.questions[i].options[1].options%>
+                </label>
+                <label>C.
+                    <%=data.questions[i].options[2].options%>
+                </label>
+                <label>D.
+                    <%=data.questions[i].options[3].options%>
+                </label>
+            </div>
+            <label>&nbsp;答案：</label>
+            <span><%=data.questions[i].answer%></span>
+            <hr>
+            {{else if data.questions[i].type.id==1}}
+            <span>单选题</span><br>
+            <label>&nbsp;{{i+1}}. <%=data.questions[i].title%></label>
+            &nbsp;
+            <div class="radio">
+                <label>选项</label>
+                <label>A.
+                    <%=data.questions[i].options[0].options%>
+                </label>
+                <label>B.
+                    <%=data.questions[i].options[1].options%>
+                </label>
+                <label>C.
+                    <%=data.questions[i].options[2].options%>
+                </label>
+                <label>D.
+                    <%=data.questions[i].options[3].options%>
+                </label>
+            </div>
+            <label>&nbsp;答案：</label>
+            <span><%=data.questions[i].answer%></span>
+            <hr>
+            {{else}}
+            <span>判断题</span><br>
+            <label>&nbsp;{{i+1}}. <%=data.questions[i].title%></label>
+            <br>
+            <label>&nbsp;答案：</label>
+            {{if data.questions[i].answer=="A"}}
+            <span>正确</span>
+            <hr>
+            {{else}}
+            <span>错误</span>
+            <hr>
+            {{/if}}
+            {{/if}}
+        </div>
+    </div>
+    <% } %>
+    <br><br>
+</script>
+
+<body>
+<nav class="navbar" id="nav" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="font-size:32px;color: white;" href="teacher.html">首页</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-collapse-example">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="updateUser.html">用户管理</a>
+                </li>
+                <li>
+                    <a href="questions.html">试题管理</a>
+                </li>
+                <li>
+                    <a href="papers.html">试卷管理</a>
+                </li>
+                <li>
+                    <a href="scores.html">学生成绩查询</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>教师</li>
+                <li>
+                    <a data-toggle="dropdown" style="font-size:20px">
+                        <span id="currentName"></span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" style="font-size: 20px;">
+                        <li>
+                            <a href="updPassword.html" style="color: black;">修改密码</a>
+                        </li>
+                        <li>
+                            <a href="/api/logout" style="color: black;">退出</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="main">
+    <nav class="menu" data-ride="menu" style="width: 210px;height:153px;line-height: 30px">
+        <ul class="tree tree-menu" style="width: 150px;">
+            <li>
+                <a href="papers.html">
+                    <i class="icon icon-th"></i>首页
+                </a>
+            </li>
+            <li>
+                <a href="createPaper.html">
+                    <i class="icon icon-user"></i>生成试卷
+                </a>
+            </li>
+            <li>
+                <a href="deletePapers.html">
+                    <i class="icon icon-trash"></i>批量删除
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <form id="select" style="position:relative;left: 20px;">
+        <div class="row" style="position:relative;left: 50px;">
+            <div class="input-group" style="float: left;left: 40px;width: 180px;">
+                <div class="input-control search-box has-icon-left has-icon-right search-example" style="position: relative;right: 30px;">
+                    <input id="searchInputExample" autofocus="autofocus" name="keyword" type="search"
+                           class="form-control search-input" placeholder="请输入关键字" style="font-size: 15px">
+                    <label class="input-control-icon-left search-icon">
+                        <i class="icon icon-search"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4" style="position: relative;right: 20px;">
+                <span style="float: left;margin-left: 70px;font-size: 18px;color: white;">从&nbsp;&nbsp;</span>
+                <input name="beginTime" type="date" style="width: 200px;font-size: 15px" class="form-control">
+            </div>
+            <div class="col-sm-4" style="position:relative;right: 30px;">
+                <span style="float: left;font-size: 18px;color: white;" >至&nbsp;&nbsp;</span>
+                <input name="endTime" type="date" style="width: 200px;float: left;font-size: 15px" class="form-control">
+                <button onclick="_select(1)" class="btn" style="position: relative;float: left;left: 30px;font-size: 14px" type="button">查询
+                </button>
+                <button onclick="_reset()" class="btn" style="position: relative;float: right;left: 75px;top: -33px;font-size: 14px" type="button">重置
+                </button>
+            </div>
+        </div>
+        <br>
+        <table id="tb" style="float: left;color: white;font-weight: bold">
+            <thead style="font-size: 20px;border-top: 2px solid white;border-bottom: 2px solid white;">
+            <tr style="height: 50px;">
+                <th style="width:60px;">
+                    <input type="checkbox" value="1" name="all">
+                </th>
+                <th style="width:100px;">试卷id</th>
+                <th style="width:180px;">创建时间</th>
+                <th style="width:120px;">标题</th>
+                <th style="width:100px;">单选题</th>
+                <th style="width:100px;">多选题</th>
+                <th style="width:100px;">判断题</th>
+                <th style="width:150px;">操作</th>
+            </tr>
+            </thead>
+            <tbody id="body">
+            </tbody>
+            <span class="btn" onclick="_deletes()" style="text-align:right;clear: both;position:relative;margin: 580px 20px 20px -80px;">全部删除</span>
+        </table>
+        <input hidden id="pageinput" name="page" value="1">
+    </form>
+</div>
+<ul id="pager">
+
+</ul>
+<br><br>
+<div id="conver">
+    <div id="show">
+        <strong style="font-size:22px;position:relative;left: 650px;top:10px ;">
+            <span id="id"></span>:<span id="title"></span>
+            <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
+        </strong>
+        <hr style="clear: right;" />
+        <div id='testPaper' style="position: relative;left: 20px;"></div>
+    </div>
+</div>
+</body>
+
+</html>

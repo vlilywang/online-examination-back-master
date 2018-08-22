@@ -15,25 +15,27 @@
 <script type="text/javascript">
     $(function () {
         $.get("/api/question?page=1&pageSize=6", function (data) {
-            $(data.data.content).each(function (index, item) {
-                $("#tbody").append("<tr>" +
+            $(data.data).each(function (index, item) {
+                $("#tbody").append("<tr style='height: 50px;border-bottom: 1px solid white;font-size: 18px;font-weight: normal'>" +
                     "<td>" + item.id + "</td>" +
                     "<td>" + item.title + "</td>" +
                     "<td>" + item.type.typeName + "</td>" +
                     "<td>" + item.answer + "</td>" +
                     "<td>" + item.createTime + "</td>" +
+                    "<td>" + item.keyword + "</td>" +
                     "</tr>")
             })
-        })
-        $.get("api/user?page=1&pageSize=6", function (data) {
-            $(data.data.content).each(function (index, item) {
+        });
+        $.get("api/user?page=1&pageSize=5", function (data) {
+            $(data.data).each(function (index, item) {
                 $("#userList").append(
                     "<li>" +
                     "<div class='user'><img src='img/user1.jpg'/></div>" +
-                    "<div class='info'>" +
-                    "<a href=''>" +item.name + "</a> <br/>ID:" +
-                    item.id + " <br/> " + item.createTime +
+                    "<div class='info'>姓名：" +
+                    item.name + "<br/>ID:" +
+                    item.id + " <br/>注册时间： " + item.createTime +
                     "</div>" +
+                    "<hr style='color: white;width: 95%;'>" +
                     "</li>"
                 )
             })
@@ -42,10 +44,10 @@
 </script>
 
 <body>
-<nav class="navbar" role="navigation">
+<nav class="navbar" id="nav" role="navigation">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+      <a class="navbar-brand" style="font-size:32px;color: white;" href="teacher.html">首页</a>
     </div>
     <div class="collapse navbar-collapse navbar-collapse-example">
       <ul class="nav navbar-nav">
@@ -56,7 +58,7 @@
           <a href="questions.html">试题管理</a>
         </li>
         <li>
-          <a href="paper.html">试卷管理</a>
+          <a href="papers.html">试卷管理</a>
         </li>
         <li>
           <a href="scores.html">学生成绩查询</a>
@@ -65,19 +67,16 @@
       <ul class="nav navbar-nav navbar-right">
         <li>教师</li>
         <li>
-          <a data-toggle="dropdown" style="font-size:16px">
-            <span id="username"></span>
+          <a data-toggle="dropdown" style="font-size:20px">
+            <span id="currentName"></span>
             <b class="caret"></b>
           </a>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu" style="font-size: 20px;">
             <li>
-              <a href="#">个人信息</a>
+              <a href="updPassword.html" style="color: black;">修改密码</a>
             </li>
             <li>
-              <a href="updPassword.html">修改密码</a>
-            </li>
-            <li>
-              <a href="/auth/logout">退出</a>
+              <a href="/api/logout" style="color: black;">退出</a>
             </li>
           </ul>
         </li>
@@ -85,32 +84,33 @@
     </div>
   </div>
 </nav>
-<div class="questionbox">
-  <div class="title">
-    <h3>最新试题</h3>
+<div class="questionbox" style="margin: -30px 0px">
+  <div class="title" style="float: left;position:relative;left: 20px;">
+    <span style="font-size: 24px;color: white;">最新试题</span>
   </div>
-  <table cellpadding="0" cellspacing="0" border="0" id="tb1">
-    <thead>
+  <table id="tb1" style="float: left;width: 800px;left: 20px;margin: 90px 0px;color: white;">
+    <thead style="font-size: 20px;border-top: 2px solid white;border-bottom: 2px solid white;font-weight: bold">
     <tr>
-      <th class="head1" style="width:100px">题号</th>
-      <th class="head0" style="width:250px">题目</th>
-      <th class="head1">类型</th>
-      <th class="head0">答案</th>
-      <th class="head1">创建时间</th>
+      <td style="width:100px">题号</td>
+      <td style="width:150px">题目</td>
+      <td>类型</td>
+      <td>答案</td>
+      <td>创建时间</td>
+      <td>关键词</td>
     </tr>
     </thead>
-    <tbody id="tbody">
+    <tbody id="tbody" style="font-size: 18px;color: white;border-bottom: 2px solid white;">
     </tbody>
   </table>
 </div>
 <div class="userbox">
   <div class="title">
-    <h3>新增用户列表</h3>
+    <span style="font-size: 24px;color: white;">新增用户</span>
   </div>
-  <div class="up"></div>
   <div class="content">
-    <div id="userList"></div>
+    <div id="userList" style="color: white;font-size: 16px"></div>
     <a class="more" href="updateUser.html">查看更多用户</a>
+    <br>
   </div>
 </div>
 </body>

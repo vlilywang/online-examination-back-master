@@ -1,22 +1,10 @@
-.navbar {
-  height: 100px;
-  font-size: 20px;
-}
-.menu {
-  display: flex;
-}
-#main {
-  display: flex;
-}
-#main a {
-  color:white;
-  font-size: 18px;
-}
-#tb th,td {
+#tb {
+  position: relative;
+  left: 180px;
   text-align: center;
 }
-#tb {
-  width: 1000px;
+#tb th {
+  text-align: center;
 }
 #pager>li>a, #pager>li>span {
   position: relative;
@@ -55,33 +43,37 @@
 }
 #pager {
   position: relative;
-  left: 600px;
+  left: 700px;
+  clear: both;
 }
 .id {
   float: left;
   margin: 10px 20px;
   font-size: 22px;
 }
+#timeDiv {
+  position: relative;
+  float: right;
+  right: 50px;
+  margin: 35px 0px 0px 0px;
+  font-size: 15px;
+  color: #ff4b2d;
+}
+#btn {
+  position: relative;
+  left: 90%;
+}
 #testPaper {
   font-size: 18px;
 }
-body {
-  background: url('../img/bg13.jpg');
-  width: 100%;
+#z {
+  display: none;
 }
-#nav ul li{
-  color: white;
+.modal-content {
+  height: 300%;
 }
-#nav ul li a{
-  color: white;
-}
-.navbar {
-  height: 100px;
-  font-size: 24px;
-}
-.pager-label {
-  color: white;
-  font-size: 18px;
+#myModal {
+  display: none;
 }
 #conver{
   width: 100%;
@@ -102,13 +94,21 @@ body {
   z-index: 101;
   display: none;
 }
-#tb{
-  table-layout:fixed;
+body {
+  background: url('../img/bg13.jpg');
+  width: 100%;
 }
-#tb td{
-  width:100%;
-  word-break:keep-all;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+#nav ul li{
+  color: white;
+}
+#nav ul li a{
+  color: white;
+}
+.navbar {
+  height: 100px;
+  font-size: 24px;
+}
+.pager-label {
+  color: white;
+  font-size: 18px;
 }

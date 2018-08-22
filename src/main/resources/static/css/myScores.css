@@ -1,30 +1,24 @@
-.menu {
-  display: flex;
+.title {
+  margin: -40px 0px 30px 160px;
+  display: inline-block;
+  border-bottom: 2px solid #FB9337;
+  width: 100px;
 }
-#main {
-  display: flex;
+
+#tb {
+  position: relative;
+  left: 300px;
 }
-#main a {
-  color:white;
-  font-size: 18px;
+
+#tb tr {
+  height: 40px;
 }
-#tb th,td {
+
+#body th tb {
   text-align: center;
 }
-.navbar {
-  height: 100px;
-  font-size: 20px;
-}
-#upd input, #upd select {
-  position: relative;
-  left: 25px;
-}
-.id {
-  position: relative;
-  left: 10px;
-  top: 10px;
-}
-#pager>li>a, #pager>li>span {
+
+#pager > li > a, #pager > li > span {
   position: relative;
   float: left;
   padding: 5px 12px;
@@ -34,19 +28,22 @@
   background-color: #fff;
   border: 1px solid #ddd;
 }
-#pager>li.active>a, #pager>li.active>a:hover, #pager>li.active>span, #pager>li.active>span:hover {
+
+#pager > li.active > a, #pager > li.active > a:hover, #pager > li.active > span, #pager > li.active > span:hover {
   z-index: 3;
   color: #fff;
   cursor: default;
   background-color: #3280fc;
   border-color: #3280fc;
 }
-#pager>li:first-child>a, #pager>li:first-child>span {
+
+#pager > li:first-child > a, #pager > li:first-child > span {
   margin-left: 0;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
 }
-#pager>li>a, #pager>li>span {
+
+#pager > li > a, #pager > li > span {
   position: relative;
   float: left;
   padding: 5px 12px;
@@ -56,12 +53,14 @@
   background-color: #fff;
   border: 1px solid #ddd;
 }
-#pager>li {
+
+#pager > li {
   display: inline;
 }
+
 #pager {
   position: relative;
-  left: 500px;
+  left: 600px;
 }
 body {
   background: url('../img/bg13.jpg');
@@ -80,14 +79,4 @@ body {
 .pager-label {
   color: white;
   font-size: 18px;
-}
-#tb{
-  table-layout:fixed;
-}
-#tb td{
-  width:100%;
-  word-break:keep-all;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }

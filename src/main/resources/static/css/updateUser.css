@@ -1,69 +1,81 @@
 #main {
 	display: flex;
 }
-.pager {
-	position: relative;
-	left: 350px;
-}
-.menu {
-	display: flex;
-	height: 100vh;
-}
-#tb {
-	width: 1000px;
+#main a {
+	color:white;
+	font-size: 18px;
 }
 #tb th,td {
 	text-align: center;
+}
+#tb tr {
+	height: 40px;
 }
 .navbar {
 	height: 100px;
 	font-size: 20px;
 }
-.d1{
-	width: 500px;
-	margin: 0px auto;
-	text-align: center;
-}
-#tb1{
-	border: 1px solid;
-	width: 300px;
-	border-collapse: collapse;
-	margin: auto;
-
-}
-#tb1 td{
-	border: 1px solid;
-}
-#conver{
-	width: 100%;
-	height: 100%;
-	background: black;
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	z-index: 100;
-	opacity: 0.8;
-	display: none;
-}
-#show1 {
-	width: 700px;
-	height: 350px;
-	background: white;
-	position: relative;
-	z-index: 101;
-	display: none;
-	border-radius: 2%;
-}
-#show2 {
-	width: 600px;
-	height: 250px;
-	background: white;
-	position: relative;
-	z-index: 101;
-	display: none;
-	border-radius: 2%;
-}
 #upd1 input, #upd1 select {
 	position: relative;
 	left: 25px;
+}
+#f1 {
+	clear: both;
+}
+#pager>li>a, #pager>li>span {
+	position: relative;
+	float: left;
+	padding: 5px 12px;
+	margin-left: -1px;
+	line-height: 1.53846154;
+	text-decoration: none;
+	background-color: #fff;
+	border: 1px solid #ddd;
+}
+#pager>li.active>a, #pager>li.active>a:hover, #pager>li.active>span, #pager>li.active>span:hover {
+	z-index: 3;
+	color: #fff;
+	cursor: default;
+	background-color: #3280fc;
+	border-color: #3280fc;
+}
+#pager>li:first-child>a, #pager>li:first-child>span {
+	margin-left: 0;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+}
+#pager>li>a, #pager>li>span {
+	position: relative;
+	float: left;
+	padding: 5px 12px;
+	margin-left: -1px;
+	line-height: 1.53846154;
+	text-decoration: none;
+	background-color: #fff;
+	border: 1px solid #ddd;
+}
+#pager>li {
+	display: inline;
+}
+#pager {
+	position: relative;
+	left: 600px;
+}
+body {
+	background: url('../img/bg13.jpg');
+	width: 100%;
+}
+#nav ul li{
+	color: white;
+}
+#nav ul li a{
+	color: white;
+}
+.navbar {
+	height: 100px;
+	font-size: 24px;
+}
+.pager-label {
+	color: white;
+	font-size: 18px;
 }

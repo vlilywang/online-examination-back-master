@@ -16,8 +16,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/exampaper")
-// 搜索接口的关键词
-// 生成试卷和删除试卷时没有修改试题的isUsed状态
 public class ExamPaperController {
     private ExamPaperService examPaperService;
     private QuestionService questionService;
@@ -118,9 +116,9 @@ public class ExamPaperController {
             return ResultData.error("判断题不够，只有" + judgeCount + "个");
         }
 
-//        if (singleAmount * 1 + multiAmount * 2 + judgeAmount * 0.5 != 100) {
-//            return ResultData.error("试卷总分应该为100分，有问题昂");
-//        }
+        if (singleAmount * 1 + multiAmount * 2 + judgeAmount * 0.5 != 100) {
+            return ResultData.error("试卷总分应该为100分，有问题昂");
+        }
 
         try {
             ExamPaper examPaper = examPaperService.create(title, keyword, singleAmount, multiAmount, judgeAmount);

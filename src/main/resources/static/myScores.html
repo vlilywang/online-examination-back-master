@@ -9,54 +9,153 @@
     <script src="lib/chart/zui.chart.min.js"></script>
     <script src="js/getUsername.js"></script>
     <link rel="stylesheet" href="css/zui.min.css">
+    <link rel="stylesheet" href="css/myScores.css">
 </head>
-<style type="text/css" >
-    .navbar {
-        height: 100px;
-        font-size: 20px;
+
+<script id="myscores" type="text/html">
+    <% for(i=0;i<data.data.length;i++){ %>
+    <tr>
+        <td><%=data.data[i].examPaper.id%></td>
+        <td><%=data.data[i].examPaper.title%></td>
+        <td><%=data.data[i].examPaper.keyword%></td>
+        <td><%=data.data[i].grade%></td>
+        <td><%=data.data[i].createTime%></td>
+    </tr>
+    <% } %>
+</script>
+<script id="myPager" type="text/html">
+    {{if data.pageCount>1 }}
+    {{if data.page!=1}}
+    <li class="previous">
+        <a onclick="_select({{data.page-1}})" href="javascript:void(0)">«</a>
+    </li>
+    {{/if}}
+    {{if data.page>5}}
+    {{if data.page+5
+    <data.pageCount}}
+    <%for(i=data.page-4;i<=data.page+5;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{else}}
+    <%for(i=data.pageCount-9;i<=data.pageCount;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{/if}}
+    {{else}}
+    {{if data.pageCount>=10}}
+    <%for(i=1;i<=10;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{else}}
+    <%for(i=1;i<=data.pageCount;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{/if}}
+    {{/if}}
+    {{if data.page!=data.pageCount}}
+    <li class="next">
+        <a onclick="_select({{data.page+1}})" href="javascript:void(0)">»</a>
+    </li>
+    <li>
+        <div class="pager-label">第 <strong>{{data.page}}</strong>/<strong>{{data.pageCount}}</strong> 页
+        </div>
+    </li>
+    {{/if}}
+    {{if data.page==data.pageCount}}
+    <li>
+        <div class="pager-label">第 <strong>{{data.pageCount}}</strong>/<strong>{{data.pageCount}}</strong> 页
+        </div>
+    </li>
+    {{/if}}
+    {{/if}}
+</script>
+
+<script type="text/javascript">
+
+    var getParam = function (pattern) {
+        var page = 1;
+        var params = location.href.split("&");
+        for (var i = 0; i < params.length; i++) {
+            var index = params[i].lastIndexOf(pattern);
+            if (index != -1) {
+                page = params[i].substring(index + pattern.length);
+            }
+        }
+        return page;
+    };
+
+    $(function () {
+        var page = getParam("page=");
+        $.ajax({
+            type: "GET",
+            url: "/api/grade/current/all?page=" + page,
+            data: $("#form").serialize(),
+            success: function (data) {
+                var html = template("myscores", {data: data});
+                $("#body").html(html);
+                var pager = template("myPager", {data: data});
+                $("#pager").html(pager);
+                $("#li" + page).addClass("active");
+            }
+        });
+    });
+
+    var _select = function (page) {
+        $("#pageinput").val(page);
+        $.ajax({
+            type: "GET",
+            url: "/api/grade/current/all",
+            data: $("#select").serialize(),
+            success: function (data) {
+                if (data.data.length == 0) {
+                    new $.zui.Messager('没有符合条件的试卷！', {
+                        icon: 'warning-sign',
+                        placement: 'center',
+                        time: 5000
+                    }).show();
+                    $(".pager").html("");
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    var html = template("myscores", {data: data});
+                    $("#body").html(html);
+                    var pager = template("myPager", {data: data});
+                    $("#pager").html(pager);
+                    $("li").removeClass("active");
+                    var p = $("#pageinput").val();
+                    $("#li" + p).addClass("active");
+                }
+            },
+            error: function (data) {
+                new $.zui.Messager('操作失败！'+data.responseText, {
+                    icon: 'warning-sign',
+                    placement: 'center',
+                    time: 2000
+                }).show();
+                console.log(JSON.stringify(data))
+            }
+        });
     }
-    .title {
-        margin: 0px 0px 40px 200px;
-        display: inline-block;
-        border-bottom: 2px solid #FB9337;
-        width: 100px;
+
+    function _reset() {
+        window.location.reload();
     }
-    #tb {
-        width: 600px;
-        position: relative;
-        left: 300px;
-    }
-    #tb thead th, #tb thead td {
-        padding: 7px 10px;
-        border: 1px solid #ddd;
-        text-align: left;
-    }
-    .head0 {
-        background-color: #fcfcfc;
-    }
-    .head1 {
-        background-color: #f7f7f7;
-    }
-    .questionbox{
-        font-size: 15px;
-    }
-</style>
-<script type="text/javascript" >
-    $.get("", function (data) {
-        $(data).each(function (index, item) {
-            $("#tbody").append("<tr>" +
-                "<td>" + item.id + "</td>" +
-                "<td>" + item.grade + "</td>" +
-                "</tr>"
-            )
-        })
-    })
+
 </script>
 <body>
 <nav class="navbar" id="nav" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" style="font-size:30px" href="student.html">首页</a>
+            <a class="navbar-brand" style="font-size:32px;color: white;" href="onlinetest.html">首页</a>
         </div>
         <div class="collapse navbar-collapse navbar-collapse-example">
             <ul class="nav navbar-nav">
@@ -70,19 +169,16 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>学生</li>
                 <li>
-                    <a data-toggle="dropdown" style="font-size:16px">
-                        <span id="username"></span>
+                    <a data-toggle="dropdown" style="font-size:20px">
+                        <span id="currentName"></span>
                         <b class="caret"></b>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="font-size: 20px;">
                         <li>
-                            <a href="#">个人信息</a>
+                            <a href="updUserPassword.html" style="color: black;">修改密码</a>
                         </li>
                         <li>
-                            <a href="updUserPassword.html">修改密码</a>
-                        </li>
-                        <li>
-                            <a href="/auth/logout">退出</a>
+                            <a href="/api/logout" style="color: black;">退出</a>
                         </li>
                     </ul>
                 </li>
@@ -90,20 +186,52 @@
         </div>
     </div>
 </nav>
-<div class="questionbox">
+<form id="select">
     <div class="title">
-        <h3>最近考试</h3>
+        <span style="color: white;font-size: 24px">我的考试</span>
     </div>
-    <table cellpadding="0" cellspacing="0" border="0" id="tb">
-        <thead>
+    <div class="row" style="position:relative;left: 300px;">
+        <div class="input-group" style="float: left;left: 40px;width: 180px;">
+            <div class="input-control search-box has-icon-left has-icon-right search-example">
+                <input id="searchInputExample" autofocus="autofocus" name="exampaperId" type="search"
+                       class="form-control search-input" placeholder="试卷ID" style="font-size: 15px">
+                <label class="input-control-icon-left search-icon">
+                    <i class="icon icon-search"></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <span style="float: left;margin-left: 70px;font-size: 18px;color: white;">从&nbsp;&nbsp;</span>
+            <input name="beginTime" type="date" style="width: 200px;font-size: 15px" class="form-control">
+        </div>
+        <div class="col-sm-4" style="position:relative;right:140px;">
+            <span style="float: left;font-size: 18px;color: white;">至&nbsp;&nbsp;</span>
+            <input name="endTime" type="date" style="width: 200px;float: left;font-size: 15px" class="form-control">
+            <button onclick="_select(1)" class="btn" style="position: relative;right: 20px;font-size: 14px" type="button">查询
+            </button>
+            <button onclick="_reset()" class="btn" style="position: relative;float: left;left: 110px;font-size: 14px" type="button">重置
+            </button>
+        </div>
+    </div>
+    <br>
+    <table class="table" id="tb" style="float: left;width: 900px;color: white;font-weight: bold">
+        <thead style="font-size: 20px;border-top: 2px solid white;border-bottom: 2px solid white;">
         <tr>
-            <th class="head1">试卷id</th>
-            <th class="head0">我的成绩</th>
+            <td style="width: 120px;">试卷id</td>
+            <td style="width: 200px;">试卷标题</td>
+            <td style="width: 200px;">试卷关键字</td>
+            <td style="width: 200px;">我的成绩</td>
+            <td style="width: 200px;">考试时间</td>
         </tr>
         </thead>
-        <tbody id="tbody">
+        <tbody id="body" style="font-size: 18px;border-bottom: 2px solid white;">
         </tbody>
     </table>
-</div>
+
+    <input hidden id="pageinput" name="page" value="1">
+</form>
+<ul id="pager">
+
+</ul>
 </body>
 </html>

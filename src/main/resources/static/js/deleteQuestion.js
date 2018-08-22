@@ -8,25 +8,25 @@ function _delete(obj){
         var id = obj.getElementsByTagName("td")[1].innerHTML;
         $.ajax({
             type : "DELETE",
-            url:"/api/exampaper/delete/id/"+id,
+            url:"/api/question/delete/id/"+id,
             success : function(data) {
                 document.getElementById("tb").deleteRow(idx);
-                new $.zui.Messager('试卷删除成功！', {
-                    type: 'success',
+                new $.zui.Messager('试题删除成功！', {
                     icon: 'check',
                     placement: 'center',
-                    time: 2000
+                    type: 'success',
+                    time:2000
                 }).show();
                 setTimeout(function () {
-                    window.location.reload()
+                    window.location.reload();
                 }, 2000);
             },
             error:function (data) {
-                new $.zui.Messager("试卷删除失败！" + data.responseText, {
-                    type: 'danger',
+                new $.zui.Messager('试题删除失败！' + data.responseText, {
                     icon: 'warning-sign',
                     placement: 'center',
-                    time: 2000
+                    type: 'danger',
+                    time:2000
                 }).show();
             }
         });

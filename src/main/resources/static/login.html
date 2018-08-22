@@ -31,12 +31,17 @@
                             if(data.role.id == 1) {
                                 window.location.href = "teacher.html";
                             } else {
-                                window.location.href = "student.html";
+                                window.location.href = "onlinetest.html";
                             }
                         })
                     },
                     error: function (data) {
-                        alert("用户名或密码错误")
+                        new $.zui.Messager('登录失败！' + data.responseText, {
+                            icon: 'warning-sign',
+                            placement: 'center',
+                            type: 'danger',
+                            time: 2000
+                        }).show();
                     }
                 });
             }

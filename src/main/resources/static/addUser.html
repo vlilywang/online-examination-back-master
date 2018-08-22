@@ -17,9 +17,25 @@
         height: 100px;
         font-size: 20px;
     }
-
-    #f1 {
-        width: 1000px;
+    #main a {
+        color:white;
+        font-size: 18px;
+    }
+    body {
+        background: url('/img/bg13.jpg');
+    }
+    #nav ul li{
+        color: white;
+    }
+    #nav ul li a{
+        color: white;
+    }
+    .navbar {
+        height: 100px;
+        font-size: 24px;
+    }
+    #form1 {
+        width: 900px;
         position: relative;
     }
 
@@ -33,10 +49,10 @@
 </style>
 
 <body>
-<nav class="navbar" role="navigation">
+<nav class="navbar" id="nav" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+            <a class="navbar-brand" style="font-size:32px;color: white;" href="teacher.html">首页</a>
         </div>
         <div class="collapse navbar-collapse navbar-collapse-example">
             <ul class="nav navbar-nav">
@@ -47,7 +63,7 @@
                     <a href="questions.html">试题管理</a>
                 </li>
                 <li>
-                    <a href="paper.html">试卷管理</a>
+                    <a href="papers.html">试卷管理</a>
                 </li>
                 <li>
                     <a href="scores.html">学生成绩查询</a>
@@ -56,19 +72,16 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>教师</li>
                 <li>
-                    <a data-toggle="dropdown" style="font-size:16px">
-                        <span id="username"></span>
+                    <a data-toggle="dropdown" style="font-size:20px">
+                        <span id="currentName"></span>
                         <b class="caret"></b>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="font-size: 20px;">
                         <li>
-                            <a href="#">个人信息</a>
+                            <a href="updPassword.html" style="color: black;">修改密码</a>
                         </li>
                         <li>
-                            <a href="updPassword.html">修改密码</a>
-                        </li>
-                        <li>
-                            <a href="/auth/logout">退出</a>
+                            <a href="/api/logout" style="color: black;">退出</a>
                         </li>
                     </ul>
                 </li>
@@ -78,8 +91,8 @@
 </nav>
 
 <div id="main">
-    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
-        <ul class="tree tree-menu">
+    <nav class="menu" data-ride="menu" style="width: 210px;height:153px;line-height: 30px">
+        <ul class="tree tree-menu" style="width: 150px;">
             <li>
                 <a href="updateUser.html">
                     <i class="icon icon-th"></i>首页
@@ -91,59 +104,54 @@
                 </a>
             </li>
             <li>
-                <a href="selectUsers.html">
-                    <i class="icon icon-time"></i>查询用户
-                </a>
-            </li>
-            <li>
-                <a href="">
+                <a href="deleteUsers.html">
                     <i class="icon icon-trash"></i>批量删除
                 </a>
             </li>
         </ul>
     </nav>
-    <form id="f1">
-        <table class="table table-borderless" id="tb">
+    <form id="form1" style="position: relative;left: 50px;">
+        <table class="table table-borderless" id="tb" style="margin: 0px 0px;">
             <thead>
             <tr>
-                <th>请输入新增用户信息</th>
+                <td style="font-size: 22px;color: white;">请输入新增用户信息</td>
             </tr>
             </thead>
             <tbody>
+            <hr>
             <tr>
                 <td>
-                    <div class="form-group">
-                        <label for="exampleInputAccount4" class="col-sm-2">用户名</label>
-                        <div class="col-md-6 col-sm-10">
-                            <input id="userName" class="form-control" placeholder="用户名">
-                        </div>
+                    <br>
+                    <span class="col-sm-2" style="font-size: 18px;color: white;">用户名</span>
+                    <div class="col-md-6 col-sm-10">
+                        <input id="userName" class="form-control" placeholder="用户名">
                     </div>
                 </td>
             </tr>
+            <tr><td></td></tr>
             <tr>
                 <td>
-                    <div class="form-group">
-                        <label for="exampleInputAccount4" class="col-sm-2">真实姓名</label>
-                        <div class="col-md-6 col-sm-10">
-                            <input id="realName" class="form-control" placeholder="真实姓名">
-                        </div>
+                    <span class="col-sm-2" style="font-size: 18px;color: white;">真实姓名</span>
+                    <div class="col-md-6 col-sm-10">
+                        <input id="realName" class="form-control" placeholder="真实姓名">
                     </div>
                 </td>
             </tr>
+            <tr><td></td></tr>
             <tr>
                 <td>
-                    <div class="form-group">
-                        <label for="exampleInputAddress1" class="col-sm-2">用户类型</label>
-                        <div class="col-sm-3">
-                            <select class="form-control" id="type">
-                                <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
-                                <option value="2">学生</option>
-                                <option value="1">教师</option>
-                            </select>
-                        </div>
+                    <span class="col-sm-2" style="font-size: 18px;color: white;">用户类型</span>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="type">
+                            <option selected="selected" disabled="disabled" style='display: none' value=''>请选择用户类型
+                            </option>
+                            <option value="2">学生</option>
+                            <option value="1">教师</option>
+                        </select>
                     </div>
                 </td>
             </tr>
+            <tr><td></td></tr>
             <tr>
                 <td style="text-align:right">
                     <div class="form-group">
@@ -162,3 +170,4 @@
 </body>
 
 </html>
+

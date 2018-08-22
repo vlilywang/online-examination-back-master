@@ -1,7 +1,4 @@
-.navbar {
-	height: 100px;
-	font-size: 20px;
-}
+
 .title {
 	margin: 20px 0;
 	display: inline-block;
@@ -34,60 +31,27 @@
 	font-weight: bold;
 }
 .userbox {
+	list-style:none;
 	position: relative;
 	left: 100px;
 	width: 350px;
 	height: 600px;
 	float: left;
 }
-#tb1 {
-	width: 800px;
-	position: relative;
-	left: 20px;
-}
-#tobdy tr td {
+#tb1 tr {
 	height: 50px;
 }
-.questionbox {
-	position: relative;
-	left: 20px;
-	float: left;
+body {
+	background: url('../img/bg13.jpg');
+	width: 100%;
 }
-#tb1 thead th, #tb1 thead td {
-	padding: 7px 10px;
-	border: 1px solid #ddd;
-	text-align: left;
+#nav ul li{
+	color: white;
 }
-.head0 {
-	background-color: #fcfcfc;
+#nav ul li a{
+	color: white;
 }
-.head1 {
-	background-color: #f7f7f7;
+.navbar {
+	height: 100px;
+	font-size: 24px;
 }
-#tb1 tbody tr td {
-	padding: 8px 10px;
-	border-right: 1px solid #eee;
-	border-bottom: 1px solid #eee;
-	color: #666;
-}
-#tr {
-	height: 50px;
-}
-.questionbox{
-	font-size: 15px;
-}
-.userbox{
-	font-size: 15px;
-}
-/*body {*/
-	/*background: url('../img/bg.jpg');*/
-/*}*/
-/*.navbar li a{*/
-	/*color: white;*/
-/*}*/
-/*.navbar-brand {*/
-	/*color: white;*/
-/*}*/
-/*nav li {*/
-	/*color: white;*/
-/*}*/

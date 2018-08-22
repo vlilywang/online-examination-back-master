@@ -1,5 +1,5 @@
 $.get("/api/user/current", function (data) {
-    $("#username").append(
+    $("#currentName").append(
         data.username
     )
 })

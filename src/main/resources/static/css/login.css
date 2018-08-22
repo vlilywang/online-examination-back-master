@@ -27,7 +27,8 @@ span {
   width:300px;
 }
 body {
-  background: url('../img/bg.jpg');
+  background: url('../img/bg13.jpg');
+  width: 100%;
 }
 #div1 {
   color: white;

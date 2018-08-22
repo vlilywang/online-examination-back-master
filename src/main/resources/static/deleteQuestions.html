@@ -42,7 +42,7 @@
                     "错误：<input type='radio' value='B' name='2' id='B'>" +
                     "</div>" +
                     "<br>" +
-                    "<div style='text-align:right;width:550px'>" +
+                    "<div style='text-align:right;width:500px'>" +
                     "<button type='button' class='btn' onclick='_updQuestion1()'>确认修改</button>" +
                     "</div>" +
                     "</form>"
@@ -139,7 +139,7 @@
                 }).show();
                 setTimeout(function () {
                     window.location.reload();
-                }, 2000)
+                }, 2000);
                 console.log(JSON.stringify(data))
             }
         });
@@ -211,6 +211,48 @@
         });
     });
 
+    function _deletes() {
+        obj = document.getElementsByName("single");
+        ids = [];
+        for(i in obj){
+            if(obj[i].checked)
+                ids.push(obj[i].value);
+        }
+        if (ids == '') {
+            new $.zui.Messager('未选择任何试题！', {
+                icon: 'warning-sign',
+                placement: 'center',
+                type: 'danger',
+                time:2000
+            }).show();
+        } else {
+            $.ajax({
+                type : "DELETE",
+                url:"/api/question/delete/ids/"+ids,
+                success : function(data) {
+                    new $.zui.Messager('试题删除成功！', {
+                        icon: 'check',
+                        placement: 'center',
+                        type: 'success',
+                        time:2000
+                    }).show();
+                    setTimeout(function () {
+                        window.location.href = "deleteQuestions.html"
+                    }, 2000);
+                },
+                error:function (data) {
+                    new $.zui.Messager('试题删除失败' + data.responseText, {
+                        icon: 'warning-sign',
+                        placement: 'center',
+                        type: 'danger',
+                        time:2000
+                    }).show();
+                    console.log(JSON.stringify(data))
+                }
+            });
+        }
+    }
+
     var _select = function (page) {
         $("#pageinput").val(page);
         $.ajax({
@@ -262,12 +304,12 @@
     <data.data.length;i++){ %>
     <tr style="height: 50px;border-bottom: 1px solid white;font-size: 18px;font-weight: normal">
         <td>
-            <input type='checkbox' value='1' name='single'>
+            <input type='checkbox' value='<%=data.data[i].id%>' name='single'>
         </td>
-        <td><%=data.data[i].id%></td>
+        <td style="height: 50px;"><%=data.data[i].id%></td>
         <td><%=data.data[i].createTime%></td>
         <td><%=data.data[i].type.typeName%></td>
-        <td><%=data.data[i].title%></td>
+        <td noWrap><%=data.data[i].title%></td>
         <td><%=data.data[i].keyword%></td>
         <td>
             <i onclick="_edit(this)" class='icon icon-edit icon-2x' style="cursor: pointer;" data-custom="<div class='id1'></div><div id='body1'></div>" data-toggle="modal" title="编辑试题"></i>
@@ -277,7 +319,6 @@
     </tr>
     <% } %>
 </script>
-
 <script id="myPager" type="text/html">
     {{if data.pageCount>1 }}
     {{if data.page!=1}}
@@ -393,7 +434,7 @@
             </li>
         </ul>
     </nav>
-    <form id="select">
+    <form id="select" onsubmit="false">
         <div class="row" style="position:relative;left: 40px;">
             <div class="col-sm-1" class="input-group">
                 <select name="typeId" class="form-control" style="width:100px;float: left;font-size: 15px">
@@ -426,7 +467,7 @@
             </div>
         </div>
         <br><br>
-        <table id="tb" style="float: left;color: white;font-weight: bold;width: 1100px;">
+        <table id="tb" style="float: left;color: white;font-weight: bold;width: 1100px;table-layout:fixed;">
             <thead style="font-size: 20px;border-top: 2px solid white;border-bottom: 2px solid white;">
             <tr style="height: 50px;">
                 <th style="width:60px;">
@@ -443,10 +484,11 @@
             <tbody id="body">
             </tbody>
         </table>
+        <span class="btn" onclick="_deletes()" style="text-align:right;clear: both;position:relative;margin: 580px 20px 20px -80px;">全部删除</span>
         <input hidden id="pageinput" name="page" value="1">
     </form>
 </div>
-<br><br>
+<br>
 <ul id="pager">
 
 </ul>

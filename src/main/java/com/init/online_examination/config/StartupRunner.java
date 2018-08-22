@@ -34,8 +34,8 @@ public class StartupRunner implements CommandLineRunner {
 
     public void addDefaultRole() {
         if (userService.countRole() == 0) {
-            userService.createRole("ADMIN");
-            userService.createRole("USER");
+            userService.createRole("TEACHER");
+            userService.createRole("STUDENT");
         }
     }
     public void addTypes() {

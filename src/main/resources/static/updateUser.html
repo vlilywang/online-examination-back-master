@@ -8,98 +8,106 @@
     <script src="js/template-web.js"></script>
     <script src="js/zui.min.js"></script>
     <script src="lib/chart/zui.chart.min.js"></script>
-    <script src="js/deleteUsers.js"></script>
+    <script src="js/deleteUser.js"></script>
     <script src="js/checkbox.js"></script>
     <script src="js/getUsername.js"></script>
     <link rel="stylesheet" href="css/zui.min.css">
     <link rel="stylesheet" href="css/updateUser.css">
 </head>
 <script type="text/javascript">
-    $(function () {
-        $.get("api/user?page=1&pageSize=6", function (data) {
-            $(data.data.content).each(function (index, item) {
-                $("#body").append("<tr>" +
-                    "<td>" +
-                    "<input type='checkbox' value='1' name='single'>" +
-                    "</td>" +
-                    "<td>" + item.id + "</td>" +
-                    "<td>" + item.createTime + "</td>" +
-                    "<td>" + item.username + "</td>" +
-                    "<td>" + item.name + "</td>" +
-                    "<td>" + item.role.name + "</td>" +
-                    "<td>" +
-                    "<button class='btn' onclick='_show1(this)' title='编辑用户'>" +
-                    "<i class='icon icon-edit' id='edit'></i>" +
-                    "</button>" +
-                    "<button class='btn' onclick='_delete(this)' title='删除用户'>" +
-                    "<i class='icon icon-cut' id='delete'></i>" +
-                    "</button>" +
-                    "<button class='btn' onclick='_show2(this)' title='修改密码'>" +
-                    "<i class='icon icon-key'></i>" +
-                    "</button>" +
-                    "</td>" +
-                    "</tr>")
-            })
-        })
-    })
-
-    function _show1(obj) {
+    function _editUser(obj) {
         while (obj.nodeName != "TR") {
             obj = obj.parentNode;
         }
         var idx = obj.rowIndex;
         var id = obj.getElementsByTagName("td")[1].innerHTML;
-        $.get("/api/user/" + id, function (data) {
-            $(data).each(function (index, item) {
-                $("#name").val(item.name)
-            })
-        })
-        var w = document.body.clientWidth;
-        w = w / 2 - 350;
-        document.getElementById("conver").style.display = "block";
-        document.getElementById("show1").style.display = "block";
-        document.getElementById("pager").style.display = "none";
-        document.getElementById("main").style.display = "none";
-        document.getElementById("show1").style.left = w + "px";
-        document.getElementById("show1").style.top = 120 + "px";
-        $(".id").append(id)
+        $.ajax({
+            type: "GET",
+            url: "/api/user/" + id,
+            success: function (data) {
+                $(".id1").append("用户ID：<strong id='id1'>" + id + "</strong>");
+                $("#body1").html("<form id='upd1' class='form-horizontal'>" +
+                            "<br>" +
+                            "<div class='form-group'>" +
+                            "<label class='col-sm-2 required' style='width:100px;'>真实姓名</label>" +
+                            "<input type='text' class='form-control' id='name1' style='width:300px;' placeholder='真实姓名'>" +
+                            "</div>" +
+                            "<br>" +
+                            "<div class='form-group'>" +
+                            "<label class='col-sm-2 required' style='width:100px;'>用户角色</label>" +
+                            "<select class='form-control' id='role' style='width:300px'>" +
+                            "<option value='2' id='2'>学生</option>" +
+                            "<option value='1' id='1'>教师</option>" +
+                            "</select>" +
+                            "</div>" +
+                            "<br>" +
+                            "<br>" +
+                            "<div style='text-align:right;width:550px'>" +
+                            "<button type='button' class='btn' onclick='_updUser()'>确认修改</button>" +
+                            "</div>" +
+                            "</form>");
+                $("#name1").val(data.name)
+                if(data.role.id == 1) {
+                    $("#1").attr("selected",true);
+                } else {
+                    $("#2").attr("selected",true);
+                }
+            }
+        });
     }
 
-    function _show2(obj) {
+    function _editPass(obj) {
         while (obj.nodeName != "TR") {
             obj = obj.parentNode;
         }
         var idx = obj.rowIndex;
         var id = obj.getElementsByTagName("td")[1].innerHTML;
-        var w = document.body.clientWidth;
-        w = w / 2 - 300;
-        document.getElementById("conver").style.display = "block";
-        document.getElementById("show2").style.display = "block";
-        document.getElementById("pager").style.display = "none";
-        document.getElementById("main").style.display = "none";
-        document.getElementById("show2").style.left = w + "px";
-        document.getElementById("show2").style.top = 120 + "px";
-        $(".id").append(id)
-    }
-
-    function _close() {
-        window.location.href = "updateUser.html";
+        $.ajax({
+            type: "GET",
+            url: "/api/user/" + id,
+            success: function (data) {
+                $(".id2").append("用户ID：<strong id='id2'>" + data.id + "</strong>");
+                $("#body2").append("<form id='upd2' class='form-horizontal'>" +
+                    "<br>" +
+                    "<div class='form-group'>" +
+                    "<label class='col-sm-2 required' style='width:100px;'>新密码</label>" +
+                    "<input type='text' class='form-control' id='newPass' style='width:400px;' placeholder='新密码'>" +
+                    "</div>" +
+                    "<br>" +
+                    "<div style='text-align:right;width:550px'>" +
+                    "<button type='button' class='btn'' onclick='_updUserPass()'>确认修改</button>" +
+                    "</div>" +
+                    "</form>")
+            }
+        })
     }
 
     function _updUser() {
         var id = $("#id1").text();
-        var name = $("#name").val();
-        var typeId = $("#type").val();
+        var name = $("#name1").val();
+        var roleId = $("#role").val();
         $.ajax({
             type: "PUT",
             url: "/api/user/" + id,
-            data: JSON.stringify({ name: name, roleId: typeId }),
+            data: JSON.stringify({name: name, roleId: roleId}),
             contentType: "application/json",
             success: function (data) {
-                alert("用户信息修改成功！")
-                window.location.href = "updateUser.html"
+                new $.zui.Messager('用户信息修改成功！', {
+                    icon: 'check',
+                    placement: 'center',
+                    type: 'success',
+                    time : 2000
+                }).show();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
             },
             error: function (data) {
+                new $.zui.Messager('用户信息修改失败！' + data.responseText, {
+                    type: 'danger',
+                    placement: 'center',
+                    time : 2000
+                }).show();
                 console.log(JSON.stringify(data))
             }
         });
@@ -111,24 +119,180 @@
         $.ajax({
             type: "PUT",
             url: "/api/user/" + id + "/password",
-            data: JSON.stringify({ newPassword: newPass }),
+            data: JSON.stringify({newPassword: newPass}),
             contentType: "application/json",
             success: function (data) {
-                alert("用户密码修改成功！")
-                window.location.href = "updateUser.html"
+                new $.zui.Messager('用户密码修改成功！', {
+                    icon: 'check',
+                    placement: 'center',
+                    type: 'success',
+                    time:2000
+                }).show();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
             },
             error: function (data) {
+                new $.zui.Messager(data.responseText, {
+                    icon: 'warning-sign',
+                    placement: 'center'
+                }).show();
                 console.log(JSON.stringify(data))
             }
         });
     }
+
+    var getParam = function (pattern) {
+        var page = 1;
+        var params = location.href.split("&");
+        for (var i = 0; i < params.length; i++) {
+            var index = params[i].lastIndexOf(pattern);
+            if (index != -1) {
+                page = params[i].substring(index + pattern.length);
+            }
+        }
+        return page;
+    }
+
+    $(function () {
+        var page = getParam("page=");
+        $.ajax({
+            type: "GET",
+            url: "/api/user?page=" + page,
+            data: $("#form").serialize(),
+            success: function (data) {
+                var html = template("user", {data: data});
+                $("#tbody").html(html);
+                var pager = template("myPager", {data: data});
+                $("#pager").html(pager);
+                $("#li" + page).addClass("active");
+            }
+        });
+    });
+
+    var _select = function (page) {
+        $("#pageinput").val(page);
+        $.ajax({
+            type: "GET",
+            url: "/api/user/",
+            data: $("#select").serialize(),
+            success: function (data) {
+                if (data.data.length == 0) {
+                    new $.zui.Messager('没有符合条件的用户！', {
+                        icon: 'warning-sign',
+                        placement: 'center',
+                        time:2000
+                    }).show();
+                    $(".pager").html("");
+                } else {
+                    var html = template("user", {data: data});
+                    $("#tbody").html(html);
+                    var pager = template("myPager", {data: data});
+                    $("#pager").html(pager);
+                    $("li").removeClass("active");
+                    var p = $("#pageinput").val();
+                    $("#li" + p).addClass("active");
+                }
+            },
+            error: function (data) {
+                new $.zui.Messager('操作失败！', {
+                    icon: 'warning-sign',
+                    placement: 'center',
+                    time:2000
+                }).show();
+                console.log(JSON.stringify(data))
+            }
+        });
+    }
+
+    function _reset() {
+        window.location.reload();
+    }
+
+</script>
+
+<script id="user" type="text/html">
+    <% for(i=0;i<data.data.length;i++){ %>
+    <tr style="height: 50px;border-bottom: 1px solid white;font-size: 18px;font-weight: normal">
+        <td>
+            <input type='checkbox' value='1' name='single'>
+        </td>
+        <td><%=data.data[i].id%></td>
+        <td><%=data.data[i].createTime%></td>
+        <td><%=data.data[i].username%></td>
+        <td><%=data.data[i].name%></td>
+        <td><%=data.data[i].role.name%></td>
+        <td>
+            <i class='icon icon-edit icon-2x' onclick="_editUser(this)" style="cursor: pointer;" data-custom="<div class='id1'></div><div id='body1'></div>" data-toggle="modal" title="编辑用户"></i>
+            &nbsp;
+            <i class='icon icon-cut icon-2x' onclick='_delete(this)' style="cursor: pointer;" title='删除用户'></i>
+            &nbsp;
+            <i class='icon icon-key icon-2x' onclick="_editPass(this)" style="cursor: pointer;" data-custom="<div class='id2'></div><div id='body2'></div>" data-toggle="modal" title="修改密码"></i>
+        </td>
+    </tr>
+    <% } %>
+</script>
+
+<script id="myPager" type="text/html">
+    {{if data.pageCount>1 }}
+    {{if data.page!=1}}
+    <li class="previous">
+        <a onclick="_select({{data.page-1}})" href="javascript:void(0)">«</a>
+    </li>
+    {{/if}}
+    {{if data.page>5}}
+    {{if data.page+5
+    <data.pageCount}}
+    <%for(i=data.page-4;i<=data.page+5;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{else}}
+    <%for(i=data.pageCount-9;i<=data.pageCount;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{/if}}
+    {{else}}
+    {{if data.pageCount>=10}}
+    <%for(i=1;i<=10;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{else}}
+    <%for(i=1;i<=data.pageCount;i++){%>
+    <li id="li{{i}}">
+        <a onclick="_select({{i}})" href="javascript:void(0)">{{i}}</a>
+    </li>
+    <% } %>
+    {{/if}}
+    {{/if}}
+    {{if data.page!=data.pageCount}}
+    <li class="next">
+        <a onclick="_select({{data.page+1}})" href="javascript:void(0)">»</a>
+    </li>
+    <li>
+        <div class="pager-label">第 <strong>{{data.page}}</strong>/<strong>{{data.pageCount}}</strong> 页
+        </div>
+    </li>
+    {{/if}}
+    {{if data.page==data.pageCount}}
+    <li>
+        <div class="pager-label">第 <strong>{{data.pageCount}}</strong>/<strong>{{data.pageCount}}</strong> 页
+        </div>
+    </li>
+    {{/if}}
+    {{/if}}
 </script>
 
 <body>
-<nav class="navbar" role="navigation">
+<nav class="navbar" id="nav" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" style="font-size:30px" href="teacher.html">首页</a>
+            <a class="navbar-brand" style="font-size:32px;color: white;" href="teacher.html">首页</a>
         </div>
         <div class="collapse navbar-collapse navbar-collapse-example">
             <ul class="nav navbar-nav">
@@ -139,7 +303,7 @@
                     <a href="questions.html">试题管理</a>
                 </li>
                 <li>
-                    <a href="paper.html">试卷管理</a>
+                    <a href="papers.html">试卷管理</a>
                 </li>
                 <li>
                     <a href="scores.html">学生成绩查询</a>
@@ -148,19 +312,16 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>教师</li>
                 <li>
-                    <a data-toggle="dropdown" style="font-size:16px">
-                        <span id="username"></span>
+                    <a data-toggle="dropdown" style="font-size:20px">
+                        <span id="currentName"></span>
                         <b class="caret"></b>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="font-size: 20px;">
                         <li>
-                            <a href="#">个人信息</a>
+                            <a href="updPassword.html" style="color: black;">修改密码</a>
                         </li>
                         <li>
-                            <a href="updPassword.html">修改密码</a>
-                        </li>
-                        <li>
-                            <a href="/auth/logout">退出</a>
+                            <a href="/api/logout" style="color: black;">退出</a>
                         </li>
                     </ul>
                 </li>
@@ -169,8 +330,8 @@
     </div>
 </nav>
 <div id="main">
-    <nav class="menu" data-ride="menu" style="width: 180px;height:160px">
-        <ul class="tree tree-menu">
+    <nav class="menu" data-ride="menu" style="width: 210px;height:153px;line-height: 30px">
+        <ul class="tree tree-menu" style="width: 150px;">
             <li>
                 <a href="updateUser.html">
                     <i class="icon icon-th"></i>首页
@@ -182,143 +343,69 @@
                 </a>
             </li>
             <li>
-                <a href="selectUsers.html">
-                    <i class="icon icon-time"></i>查询用户
-                </a>
-            </li>
-            <li>
-                <a href="updateUser.html">
+                <a href="deleteUsers.html">
                     <i class="icon icon-trash"></i>批量删除
                 </a>
             </li>
         </ul>
     </nav>
-    <table class="table table-hover" id="tb">
-        <thead>
-        <tr>
-            <th>
-                <input type='checkbox' value='1' name='all'>
-            </th>
-            <th style='width:125px;'>用户id</th>
-            <th style='width:150px;'>创建时间</th>
-            <th style='width:200px;'>用户名</th>
-            <th style='width:200px;'>真实姓名</th>
-            <th style='width:150px;'>用户类型</th>
-            <th style='width:175px;'>操作</th>
-        </tr>
-        </thead>
-        <tbody id="body">
-        </tbody>
-    </table>
-</div>
-<div id="pager" class="pager">
-    <li class="pager-item-left">
-        <a class="pager-item" data-page="1" href="#page=1">
-            <i class="icon icon-step-backward"></i>
-        </a>
-    </li>
-    <li class="disabled">
-        <a class="pager-item" data-page="0" href="###">
-            <i class="icon icon-double-angle-left"></i>
-        </a>
-    </li>
-    <li class="active">
-        <a class="pager-item" data-page="1" href="#page=1">1</a>
-    </li>
-    <li>
-        <a class="pager-item" data-page="2" href="#page=2">2</a>
-    </li>
-    <li>
-        <a class="pager-item" data-page="3" href="#page=3">3</a>
-    </li>
-    <li>
-        <a class="pager-item" data-page="4" href="#page=4">4</a>
-    </li>
-    <li>
-        <a class="pager-item" data-page="5" href="#page=5">5</a>
-    </li>
-    <li>
-        <a class="pager-item" data-page="6" href="#page=6">6</a>
-    </li>
-    <li>
-        <a class="pager-item" data-page="2" href="#page=2">
-            <i class="icon icon-double-angle-right"></i>
-        </a>
-    </li>
-    <li class="pager-item-right">
-        <a class="pager-item" data-page="10" href="#page=10">
-            <i class="icon icon-step-forward"></i>
-        </a>
-    </li>
-    <li>
-        <div class="pager-label">第
-            <strong>1</strong>/
-            <strong>10</strong> 页
-        </div>
-    </li>
-    <li>
-        <div class="pager-label">第
-            <strong>1</strong> ~
-            <strong>10</strong> 项
-        </div>
-    </li>
-    <li>
-        <div class="pager-label">共
-            <strong>100</strong> 项
-        </div>
-    </li>
-</div>
-<div id="conver">
-    <div id="show1">
-        <strong style="font-size:22px">
-            您正在修改用户ID:
-            <span class="id" id="id1"></span>
-            的信息
-        </strong>
-        <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
-        <hr style="clear: right;" />
-        <form id="upd1" class="form-horizontal">
-            <br>
-            <div class="form-group">
-                <label class="col-sm-2 required" style="width:100px;">真实姓名</label>
-                <input type="text" class="form-control" id="name" style="width:500px;" placeholder="真实姓名">
-            </div>
-            <br>
-            <div class="form-group">
-                <label class="col-sm-2 required" style="width:100px;">用户角色</label>
-                <select class="form-control" id="type" style="width:500px">
+    <form id="select">
+        <div class="row" style="position:relative;left: 50px;">
+            <div class="col-sm-1" class="input-group">
+                <select name="roleId" class="form-control" style="width:80px;float: left;font-size: 15px">
+                    <option value="">全部</option>
                     <option value="2">学生</option>
                     <option value="1">教师</option>
                 </select>
             </div>
-            <br>
-            <br>
-            <div style="text-align:right;width:650px">
-                <button type="button" class="btn" onclick="_updUser()">确认修改</button>
+            <div class="input-group" style="float: left;left: 40px;width: 180px;">
+                <div class="input-control search-box has-icon-left has-icon-right search-example">
+                    <input id="searchInputExample" autofocus="autofocus" name="keyword" type="search"
+                           class="form-control search-input" placeholder="请输入关键字" style="font-size: 15px">
+                    <label class="input-control-icon-left search-icon">
+                        <i class="icon icon-search"></i>
+                    </label>
+                </div>
             </div>
-        </form>
-    </div>
-    <div id="show2">
-        <strong style="font-size:22px">
-            您正在修改用户ID:
-            <span class="id" id="id2"></span>
-            的密码
-        </strong>
-        <span style="font-size: 25px;float: right;cursor: pointer;" onclick="_close()">&times;</span>
-        <hr style="clear: right;" />
-        <form id="upd2" class="form-horizontal">
-            <br>
-            <div class="form-group">
-                <label class="col-sm-2 required" style="width:100px;">新密码</label>
-                <input type="text" class="form-control" id="newPass" style="width:400px;" placeholder="新密码">
+            <div class="col-sm-4" style="position: relative;left: 70px">
+                <span style="float: left;;font-size: 18px;color: white;">从&nbsp;&nbsp;</span>
+                <input name="beginTime" type="date" style="width: 200px;font-size: 15px" class="form-control">
             </div>
-            <br>
-            <div style="text-align:right;width:550px">
-                <button type="button" class="btn" onclick="_updUserPass()">确认修改</button>
+            <div class="col-sm-4" style="position: relative;right: 45px">
+                <span style="float: left;font-size: 18px;color: white;">至&nbsp;&nbsp;</span>
+                <input name="endTime" type="date" style="width: 200px;float: left;font-size: 15px" class="form-control">
+                <button onclick="_select(1)" class="btn" style="position: relative;float: left;left: 30px;font-size: 14px" type="button">查询
+                </button>
+                <button onclick="_reset()" class="btn" style="position: relative;float: left;left: 60px;font-size: 14px" type="button">重置
+                </button>
             </div>
-        </form>
-    </div>
+        </div>
+        <br><br>
+        <table id="tb" style="float: left;color: white;font-weight: bold">
+            <thead style="font-size: 20px;border-top: 2px solid white;border-bottom: 2px solid white;">
+            <tr style="height: 50px;">
+                <th style='width:60px;'>
+                    <input type='checkbox' value='1' name='all'>
+                </th>
+                <th style='width:100px;'>用户id</th>
+                <th style='width:200px;'>创建时间</th>
+                <th style='width:180px;'>用户名</th>
+                <th style='width:180px;'>真实姓名</th>
+                <th style='width:150px;'>用户类型</th>
+                <th style='width:180px;'>操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+        <input id="pageinput" name="page" value="1" hidden>
+    </form>
 </div>
+<br>
+<ul id="pager">
+
+</ul>
+<br><br>
 </body>
 
 </html>
